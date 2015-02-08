@@ -6,9 +6,13 @@ options = {
   publisher: "xxx"
   content: [
     {
-      title: "xxxxxxxxxx"
+      title: "只有青春期，没有青春"
+      author: ["Author", "Author2"]
+      url: "http://cyrilis.com/what-the-fuxk-2"
       data: """
-  <h1>只有青春期，没有青春</h1>
+  <html>
+  <title>Javascript Sucks</title>
+  <body>
   <p>新浪编辑一直催促交一篇关于青春回忆的文章以纪念五四青年节，要求青葱向上。我想，这样的文章是要说实话的，人什么都可以撒谎，不能对青春撒谎。我的十八岁一点都没有青葱的感受，一点也不向上，而是从生理和心理都混乱迷茫。就写一些人和事吧，都是好男好女……</p>
   <p>我是和敏君相处三个月后才知道她爸是判了十年的重刑犯。这让我有些害怕。我问过自己多次，要是三个月前知道她爸的事，还会不会追她。我站在大街上观察了很多女孩子，决定还是要追。因为敏君长得实在好看。</p>
   <p>人人都说敏君长得好看，就像彭丽媛。那时人们对美女的评判大多是根据上电视的次数来定的。比如觉得奚秀兰长得很漂亮，赵忠祥长得也很帅......多年以后，我才发现敏君长得其实很像袁立，有一股突如其来的劲儿，就是大热天谁给你嘴里塞了一根桔子味儿的冰棍。对于桔子味儿冰棍这个形容敏君一直很不同意，有点生气。可是十几年后我俩在一家餐吧相遇，她已苍老了很多，有了鱼尾纹。她呵呵回忆起当年我狂追她的情景，说现在想通了桔子味儿冰棍其实是表扬她......我假装深情地述说我们之间纯洁的友谊，可我知道，我一点都不纯洁，当时我在烈日下追她，其实只是想把她骗上床。</p>
@@ -46,12 +50,15 @@ options = {
   <p>这样的青春实在让人忧伤，当初以为对的事情，现在看来是错的；当时以为很荒谬，现在看其实很正确。就是这样，这几十年来的青春教肓，我们是被骗了这样的事情还会发生，青春如吐着舌头的柴狗飞快地跑过，所以六零后、七零后、八零后是没什么区别的，我们有的是青春期，但没有青春。</p>
   <p>就是，莲花绽放，青春无处绽放。</p>
   <p>02/05/2009</p>
+  </body>
+  </html>
 """
     }
     {
-      title: "What the fuxk"
+      title: "病句"
+      author: "Cyril Hou"
+      url: "http://www.idpf.org/2007/ops"
       data: """
-  <h1>病句</h1>
   <p>和往常一样，才过了几天，人们对那件悲伤的事就有些淡了。那条沟渠还没结冰，孩子们倾覆的故事却已冰封。我本也无话可说，可昨天茌李庄的一个村民不知从哪里找到我的电话，告诉我一些事，才想起今天是孩子们的头七。我也才知道，按苏北当地风俗凡冤死或幼天必须在头七前火化入葬。我又知道，这个村遇难的十一个孩子只火化了十个。这，却不知是为何。</p>
   <p>他告诉我，校车出事之前，小镇正大搞“创文”行动。为显示文明风尚，官家要求所有摊贩、三轮车包括接送学生的自用车都不准上街，小镇忽然变得干净，人们冲上街道打扫卫生、散发传单，大街小巷挂满了醒目的文明标语......不一会儿就发生校车倾覆河沟这么不文明的事情。</p>
   <p>还有些不文明的事情：干部守在村口严防生人出入，记者被打，不知从哪调来一帮城管，对情绪不稳定人群推搡及打。</p>
@@ -71,6 +78,44 @@ options = {
   <p>插播一下，就在前天，祖国很重要的一个部门发布了一条很人性的命令：所有校车有权占用公交车专用道。朋友们都很欣慰，可我觉得这是一个病句。因为校车几乎都在农村出事，而农村并没有公交车专用道。这只是祖国无数病句中的一个。我们从小就在一个个病句的教育下出人意表地成长，命大的此时可能正看着这篇文章；命差的，名字可能已在名单上虚拟了。</p>
   <p>不知这个叫首羡的小镇“创文”行动进展得怎样了，这个正在铁路和马路上飞奔的国家，正在变成那辆刹不住的校车的图腾。我们的童年，就这样从一个个村镇浮掠而过。一种大难不死的世故，让我油然浮出这样的语境：世上本没有路，求学的孩子多了后，便有了路；世上本没有孝车，中国校车多了后，便有了孝车。</p>
   <p>纪念头七的杂文其实就是说：中国式教育，此去经年，一直是个病句。</p>
+"""
+    }
+    {
+      title: "Trouble"
+      author: "Cyril Hou, Anyone"
+      url: "http://www.idpf.org/2007/ops/cyrilis.com/what-the-fuxk-2"
+      data: """
+      <p id="chapter001-text-element00001" class="first first-in-chapter">
+      <span class="first-phrase"><span class="first-letter first-letter-t"><span class="first-letter-alpha">T</span></span>he last time</span> I heard directly from Shanley Kane, it was by email.
+      </p>
+      <p id="chapter001-text-element00002" class="subsequent subsequent-in-chapter">
+      “Leave me the fuck alone and don’t ever contact me again,” she wrote, before launching into a two-day Twitter barrage demanding that I stop harassing her, her friends, and her family, and calling me a stalker. It might have been fair, or at least accurate, if I were doing any of the above.
+      </p>
+      <p id="chapter001-text-element00003" class="subsequent subsequent-in-chapter">
+      There are a few of my recent life experiences that I’d put into a category of “almost more trouble than it’s worth.” Training for a long distance race in single-digit weather; attempting to get Time Warner Cable to explain how it had double-charged me for six months of service; and now, writing about an up-and-coming website and its intriguing but controversial founder. All of these things have redeeming value, though unless you enjoy the idea of freezing slowly while still moving, or are a connoisseur of soul-destroying hold music, the first two have some obvious downsides. 
+      </p>
+      <p id="chapter001-text-element00004" class="subsequent subsequent-in-chapter">
+      The negative side of the third only became apparent when the subject in question, Shanley Kane, alerted anyone who was following her that my story was in the works, and attributed all manner of bad faith—and a few colorful adjectives—to me, my journalistic process, and my ethics. 
+      </p>
+      <p id="chapter001-text-element00005" class="subsequent subsequent-in-chapter">
+      Kane is the 27-year-old cocreator and now sole proprietor of Model View Culture, an indie website and print quarterly that publishes essays and interviews about tech culture and diversity. I knew a little about her, mainly that her name had surfaced in some controversies that mostly took place on Twitter. She often met with disagreements by using various profanities to describe her opponent, which seemed like an odd contrast to the tone and style of the site she ran. Her anger was part of what made people uncomfortable, because that’s what female anger does generally to men—even when it’s obviously and unqualifiedly justified. 
+      </p>
+      <p id="chapter001-text-element00006" class="subsequent subsequent-in-chapter">
+      Earlier this year the New York Times fired its executive editor, Jill Abramson, with the ostensible rationale that she had not managed her newsroom well. When pressed to explain what that meant, Arthur Sulzberger, the paper’s publisher, talked specifically about her management style, which could be brusque and “bossy”. Others referred to her habit of shouting at staff, and reports included a heated argument with her male second-in-command that ended in him slamming his hand against a wall. Her inappropriate displays of anger got her fired; his seeming restraint saw him promoted in her place.
+      </p>
+      <hr id="chapter001-text-element00007"
+          class="implicit-break" />
+      <p id="chapter001-text-element00008" class="first first-after-break">
+      <span class="first-phrase"><span class="first-letter first-letter-i"><span class="first-letter-alpha">I</span></span> was thinking</span> about Jill Abramson when I took on the job to write about Shanley Kane and her work. I kept thinking about Kane’s palpable anger on Twitter, and how people were reacting to it—how unacceptable it seemed to be to some people in the tech community, and whether it would be viewed the same way if she were a man. 
+      </p>
+      <p id="chapter001-text-element00009" class="subsequent subsequent-in-chapter">
+      The more I read, the more curious I was. For many of us who do this for a living, being able to indulge that curiosity and find out what’s really going on is what makes any of it worth it, even when it turns out to be a lot of trouble. 
+      </p>
+      <p id="chapter001-text-element00010" class="subsequent subsequent-in-chapter">
+      That’s when I flew to San Francisco to meet Shanley Kane. 
+      </p>
+      <hr id="chapter001-text-element00011"
+          class="ornamental-break" />
 """
     }
   ]
