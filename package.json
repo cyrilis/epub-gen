@@ -21,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/cyrilis/pocket-to-epub/issues"
   },
-  "homepage": "https://github.com/cyrilis/pocket-to-epub"
+  "homepage": "https://github.com/cyrilis/pocket-to-epub",
+  "dependencies": {
+    "ejs": "^2.2.4",
+    "q": "^1.1.2",
+    "underscore": "^1.7.0",
+    "uslug": "^1.0.3"
+  }
 }
