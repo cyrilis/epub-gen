@@ -1,0 +1,25 @@
+{
+  "name": "epub-generator",
+  "version": "0.0.0",
+  "description": "A libraty to generate Epub from HTML",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cyrilis/pocket-to-epub.git"
+  },
+  "keywords": [
+    "epub",
+    "generate",
+    "html",
+    "epub-generator"
+  ],
+  "author": "Cyril Hou <houshoushuai@gmail.com> (http://cyrilis.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cyrilis/pocket-to-epub/issues"
+  },
+  "homepage": "https://github.com/cyrilis/pocket-to-epub"
+}
