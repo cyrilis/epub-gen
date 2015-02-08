@@ -5,6 +5,7 @@ Q = require "q"
 _ = require "underscore"
 uslug = require "uslug"
 ejs = require "ejs"
+cheerio = require "cheerio"
 
 uuid = ->
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c)->
@@ -44,24 +45,25 @@ class EPub
       content.href = "#{index}_#{titleSlug}.html"
       content.id = "item_#{index}"
       content.author =
-        if content.author
-          if _.isString(content.author)
-            [content.author]
-          else if not content.author.length
-            []
-          else
-            content.author
-        else
-          []
+        if content.author and _.isString content.author then [content.author]
+        else if not content.author or not _.isArray content.author then []
+        else content.author
 
       # Only body innerHTML is allowed
-      reg = /<body[^>]*>((.|[\n\r])*)<\/body>/
-      content.data = content.data.match(reg)?[1] || content.data
+      #reg = /<body[^>]*>((.|[\n\r])*)<\/body>/
+      #content.data = content.data.match(reg)?[1] || content.data
+      ## replace with cheerio
+      $ = cheerio.load content.data
+      if $("body").length
+        $ = cheerio.load $("body").html()
+      $("img").each (index, elem)->
+        console.log index, $(elem).attr("src")
 
       content
 
     @generateTempFile()
     @defer.promise
+
 
   generateTempFile: ()->
     self = @
@@ -69,41 +71,11 @@ class EPub
       fs.mkdirSync(@options.tempDir)
     fs.mkdirSync @uuid
     fs.mkdirSync path.resolve(@uuid, "./OEBPS")
-    @options.css ||= "
-    .epub-author{
-      color: #555;
-    }
-    .epub-link{
-      margin-bottom: 30px;
-    }
-    .epub-link a{
-      color: #666;
-      font-size: 90%;
-    }
-    .toc-author{
-      font-size: 90%;
-      color: #555;
-    }
-    .toc-link{
-      color: #999;
-      font-size: 85%;
-      display: block;
-    }
-    hr{
-      border: 0;
-      border-bottom: 1px solid #dedede;
-      margin: 60px 10%;
-    }
-    "
+    @options.css ||= ".epub-author{color: #555;}.epub-link{margin-bottom: 30px;}.epub-link a{color: #666;font-size: 90%;}.toc-author{font-size: 90%;color: #555;}.toc-link{color: #999;font-size: 85%;display: block;}hr{border: 0;border-bottom: 1px solid #dedede;margin: 60px 10%;}"
     fs.writeFileSync path.resolve(@uuid, "./OEBPS/style.css"), @options.css
 
     _.each @options.content, (content, index)->
-      data = "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en-US\">
-        <head>
-        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-        <title>#{content.title}</title>
-        <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />
-      </head><body>"
+      data = "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en-US\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>#{content.title}</title><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" /></head><body>"
       data += if content.title then "<h1>#{content.title}</h1>" else ""
       data += if content.title and content.author and content.author.length then "<p class='epub-author'>#{content.author.join(", ")}</p>" else ""
       data += if content.title and content.url then "<p class='epub-link'><a href='#{content.url}'>#{content.url}</a></p>" else ""
@@ -115,36 +87,42 @@ class EPub
 
     # write meta-inf/container.xml
     fs.mkdirSync(@uuid + "/META-INF")
-    fs.writeFileSync( "#{@uuid}/META-INF/container.xml", """
-<?xml version="1.0" encoding="UTF-8" ?>
-<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
-    <rootfiles>
-        <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
-    </rootfiles>
-</container>
-""")
+    fs.writeFileSync( "#{@uuid}/META-INF/container.xml", """<?xml version="1.0" encoding="UTF-8" ?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>""")
 
-    ejs.renderFile path.resolve(__dirname, "./content.ejs"), self.options, (err, data)->
+    Q.all([
+      Q.nfcall ejs.renderFile, path.resolve(__dirname, "./content.ejs"), self.options
+      Q.nfcall ejs.renderFile, path.resolve( __dirname , "./toc.ejs" ), self.options
+      Q.nfcall ejs.renderFile, path.resolve(__dirname, "./content.html"), self.options
+    ]).spread (data1, data2, data3)->
+      fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data1)
+      fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data2)
+      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.html"), data3)
+      self.genEpub()
+    , (err)->
+      console.error arguments
+      self.defer.reject(arguments)
+      return false
+
+
+  runCommand: (cmd, option)->
+    defer = new Q.defer()
+    exec cmd, option, (err, stderr, stdout)->
       if err
-        console.error err
-        self.defer.reject(err)
+        console.error(cmd, stderr, stdout)
+        defer.reject(err)
         return false
-      fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data)
-      ejs.renderFile path.resolve( __dirname , "./toc.ejs" ), self.options, (err, data)->
-        if err
-          console.error err
-          self.defer.reject(err)
-          return false
-        fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data)
-        ejs.renderFile path.resolve(__dirname, "./content.html"), self.options, (err, data)->
-          if err
-            console.error err
-            self.defer.reject(err)
-            return false
-          fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.html"), data)
-          self.genEpub()
+      if stderr
+        console.warn stderr
+      if stdout and option.quite
+        console.log stdout
+      defer.resolve stdout
+    defer.promise
+
 
   genEpub: ()->
+    # Thanks to Paul Bradley
+    # http://www.bradleymedia.org/gzip-markdown-epub/
+
     self = @
     console.log @uuid
     filename = "book.epub.zip"
@@ -152,33 +130,15 @@ class EPub
     zipCmd  = "zip -X -9 -r #{filename} * -x mimetype #{filename}"
     cleanUp = "mv #{filename} book.epub && rm -f -r META-INF OEBPS mimetype"
     cwd = @uuid
-    exec initCmd, {cwd}, (err, stderr, stdout)->
-      if err
-        console.error(initCmd, err, stderr, stdout)
-        self.defer.reject err
-        return false
-      if stderr
-        console.warn(stderr)
-      if stdout
-        console.log stdout
-      exec zipCmd, {cwd}, (err, stderr, stdout)->
-        if err
-          console.error(zipCmd, err, stderr, stdout)
-          self.defer.reject err
-          return false
-        if stderr
-          console.warn stderr
-        if stdout
-          console.log stdout
-        exec cleanUp, {cwd}, (err, stderr, stdout)->
-          if err
-            console.error(cleanUp, err, stderr, stdout)
-            self.defer.reject err
-            return false
-          if stderr
-            console.warn stderr
-          if stdout
-            console.log stdout
-          self.defer.resolve @
+    self.runCommand(initCmd, {cwd}).then ()->
+      self.runCommand(zipCmd, {cwd}).then ()->
+        self.runCommand(cleanUp, {cwd}).then ()->
+          self.defer.resolve self
+        , (err)->
+          self.reject(err)
+      , (err)->
+        self.reject(err)
+    , (err)->
+      self.reject(err)
 
 module.exports = EPub

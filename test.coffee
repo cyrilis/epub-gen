@@ -94,6 +94,7 @@ options = {
       <p id="chapter001-text-element00003" class="subsequent subsequent-in-chapter">
       There are a few of my recent life experiences that I’d put into a category of “almost more trouble than it’s worth.” Training for a long distance race in single-digit weather; attempting to get Time Warner Cable to explain how it had double-charged me for six months of service; and now, writing about an up-and-coming website and its intriguing but controversial founder. All of these things have redeeming value, though unless you enjoy the idea of freezing slowly while still moving, or are a connoisseur of soul-destroying hold music, the first two have some obvious downsides. 
       </p>
+      <p><img src="http://cyrilis.com/what-the-fuxk.png"/></p>
       <p id="chapter001-text-element00004" class="subsequent subsequent-in-chapter">
       The negative side of the third only became apparent when the subject in question, Shanley Kane, alerted anyone who was following her that my story was in the works, and attributed all manner of bad faith—and a few colorful adjectives—to me, my journalistic process, and my ethics. 
       </p>
