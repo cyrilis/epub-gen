@@ -13,6 +13,7 @@ uuid = ->
 
 class EPub
   constructor: (@options)->
+    @defer = new Q.defer()
     if not options.title or not options.content
       console.log "options not valid"
       return false
@@ -26,7 +27,6 @@ class EPub
     @generateTempFile()
 
   generateTempFile: ()->
-    defer = new Q.defer()
     if not @options.tempDir
       @options.tempDir = path.resolve __dirname, "../tempDir/"
     @uuid = path.resolve @options.tempDir, uuid()
@@ -35,8 +35,6 @@ class EPub
     fs.mkdirSync @uuid
     self = @
     console.log @uuid
-
-
     @options.content = _.map @options.content, (content, index)->
       titleSlug = uslug content.title
       content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.html"
@@ -65,7 +63,7 @@ class EPub
 
     # write meta-inf/container.xml
     fs.mkdirSync(@uuid + "/META-INF")
-    fs.writeFileSync(@uuid + "/META-INF/" + "container.xml", """
+    fs.writeFileSync( "#{@uuid}/META-INF/container.xml", """
 <?xml version="1.0" encoding="UTF-8" ?>
 <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
     <rootfiles>
@@ -74,17 +72,20 @@ class EPub
 </container>
 """)
 
-    ejs.renderFile path.resolve(__dirname, "./content.ejs"), @options, (err, data)->
+    ejs.renderFile path.resolve(__dirname, "./content.ejs"), self.options, (err, data)->
       if err
         console.error err
+        self.defer.reject(err)
         return false
-      console.log "./content"
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data)
-      ejs.renderFile path.resolve( __dirname , "./toc" ), @options, (err, data)->
+      ejs.renderFile path.resolve( __dirname , "./toc.ejs" ), self.options, (err, data)->
         if err
-          console.log err
+          console.error err
+          self.defer.reject(err)
           return false
-        console.log "./content"
         fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data)
+        self.defer.resolve()
+
+    self.defer.promise
 
 module.exports = EPub
