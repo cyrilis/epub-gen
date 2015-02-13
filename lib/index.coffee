@@ -6,6 +6,7 @@ _ = require "underscore"
 uslug = require "uslug"
 ejs = require "ejs"
 cheerio = require "cheerio"
+request = require "superagent"
 
 uuid = ->
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c)->
@@ -15,6 +16,7 @@ uuid = ->
 class EPub
   constructor: (@options)->
     self = @
+    self.images = []
     @defer = new Q.defer()
     if not options.title or not options.content
       console.log "options not valid"
@@ -40,10 +42,13 @@ class EPub
     console.log @uuid
 
     @options.content = _.map @options.content, (content, index)->
+
       titleSlug = uslug content.title
-      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.html"
-      content.href = "#{index}_#{titleSlug}.html"
+      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
+      content.href = "#{index}_#{titleSlug}.xhtml"
       content.id = "item_#{index}"
+
+      #fix Author Array
       content.author =
         if content.author and _.isString content.author then [content.author]
         else if not content.author or not _.isArray content.author then []
@@ -53,12 +58,16 @@ class EPub
       #reg = /<body[^>]*>((.|[\n\r])*)<\/body>/
       #content.data = content.data.match(reg)?[1] || content.data
       ## replace with cheerio
-      $ = cheerio.load content.data
+      $ = cheerio.load content.data, {xmlMode: true}
       if $("body").length
         $ = cheerio.load $("body").html()
       $("img").each (index, elem)->
-        console.log index, $(elem).attr("src")
-
+        url = $(elem).attr("src")
+        id = uuid()
+        $(elem).attr("src", "images/#{id}.jpg")
+        console.log {id, url}
+        self.images.push {id, url}
+      content.data = $.html()
       content
 
     @generateTempFile()
@@ -73,9 +82,19 @@ class EPub
     fs.mkdirSync path.resolve(@uuid, "./OEBPS")
     @options.css ||= ".epub-author{color: #555;}.epub-link{margin-bottom: 30px;}.epub-link a{color: #666;font-size: 90%;}.toc-author{font-size: 90%;color: #555;}.toc-link{color: #999;font-size: 85%;display: block;}hr{border: 0;border-bottom: 1px solid #dedede;margin: 60px 10%;}"
     fs.writeFileSync path.resolve(@uuid, "./OEBPS/style.css"), @options.css
-
-    _.each @options.content, (content, index)->
-      data = "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en-US\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>#{content.title}</title><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" /></head><body>"
+    fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
+    _.each @options.content, (content)->
+      data = """
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+      <html xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>#{content.title}</title>
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        </head>
+      <body>
+      """
       data += if content.title then "<h1>#{content.title}</h1>" else ""
       data += if content.title and content.author and content.author.length then "<p class='epub-author'>#{content.author.join(", ")}</p>" else ""
       data += if content.title and content.url then "<p class='epub-link'><a href='#{content.url}'>#{content.url}</a></p>" else ""
@@ -96,12 +115,53 @@ class EPub
     ]).spread (data1, data2, data3)->
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data1)
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data2)
-      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.html"), data3)
-      self.genEpub()
+      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.xhtml"), data3)
+      self.downloadAllImage().fin ()->
+        self.genEpub()
     , (err)->
       console.error arguments
       self.defer.reject(arguments)
       return false
+
+
+  downloadImage: (options)->  #{id, url}
+    self = @
+    userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
+    if not options.url and typeof options isnt "string"
+      return false
+    downloadImageDefer = new Q.defer()
+
+    requestAction = request.get(options.url).set 'User-Agent': userAgent
+
+    filename = path.resolve self.uuid, ("./OEBPS/images/" + options.id + ".jpg")
+
+    requestAction.pipe(fs.createWriteStream(filename))
+
+    requestAction.on 'error', (err)->
+      console.error '[Download Error]' ,'Error while downloading', options.url, err
+      fs.unlinkSync(filename)
+      downloadImageDefer.reject(err)
+
+    requestAction.on 'end', (err, result)->
+      console.log "[Download Success]", filename
+      downloadImageDefer.resolve(options)
+
+    downloadImageDefer.promise
+
+
+  downloadAllImage: ()->
+    self = @
+    imgDefer = new Q.defer()
+    if not self.images.length
+      imgDefer.resolve()
+    else
+      deferArray = []
+      _.each self.images, (image)->
+        deferArray.push self.downloadImage(image)
+      Q.all deferArray
+      .fin ()->
+        imgDefer.resolve()
+    imgDefer.promise
 
 
   runCommand: (cmd, option)->
@@ -128,7 +188,8 @@ class EPub
     filename = "book.epub.zip"
     initCmd = "zip -X -0 #{filename} mimetype"
     zipCmd  = "zip -X -9 -r #{filename} * -x mimetype #{filename}"
-    cleanUp = "mv #{filename} book.epub && rm -f -r META-INF OEBPS mimetype"
+    #cleanUp = "mv #{filename} book.epub && rm -f -r META-INF OEBPS mimetype"
+    cleanUp = "mv #{filename} book.epub"
     cwd = @uuid
     self.runCommand(initCmd, {cwd}).then ()->
       self.runCommand(zipCmd, {cwd}).then ()->

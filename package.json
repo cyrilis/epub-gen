@@ -27,6 +27,7 @@
     "q": "^1.1.2",
     "underscore": "^1.7.0",
     "uslug": "^1.0.3",
-    "cheerio": "^0.18.0"
+    "cheerio": "^0.18.0",
+    "superagent": "^0.21.0"
   }
 }

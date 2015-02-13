@@ -1,9 +1,9 @@
 EPub = require "./lib"
 
 options = {
-  title: "WTF"
+  title: "Simple Test Book"
   author: "Cyril Hou"
-  publisher: "xxx"
+  publisher: "txt.sx"
   content: [
     {
       title: "只有青春期，没有青春"
@@ -94,7 +94,7 @@ options = {
       <p id="chapter001-text-element00003" class="subsequent subsequent-in-chapter">
       There are a few of my recent life experiences that I’d put into a category of “almost more trouble than it’s worth.” Training for a long distance race in single-digit weather; attempting to get Time Warner Cable to explain how it had double-charged me for six months of service; and now, writing about an up-and-coming website and its intriguing but controversial founder. All of these things have redeeming value, though unless you enjoy the idea of freezing slowly while still moving, or are a connoisseur of soul-destroying hold music, the first two have some obvious downsides. 
       </p>
-      <p><img src="http://cyrilis.com/what-the-fuxk.png"/></p>
+      <img src="https://avatars0.githubusercontent.com/u/464389" alt="Creative Commons Attribution-NonCommercial" />
       <p id="chapter001-text-element00004" class="subsequent subsequent-in-chapter">
       The negative side of the third only became apparent when the subject in question, Shanley Kane, alerted anyone who was following her that my story was in the works, and attributed all manner of bad faith—and a few colorful adjectives—to me, my journalistic process, and my ethics. 
       </p>
@@ -104,6 +104,7 @@ options = {
       <p id="chapter001-text-element00006" class="subsequent subsequent-in-chapter">
       Earlier this year the New York Times fired its executive editor, Jill Abramson, with the ostensible rationale that she had not managed her newsroom well. When pressed to explain what that meant, Arthur Sulzberger, the paper’s publisher, talked specifically about her management style, which could be brusque and “bossy”. Others referred to her habit of shouting at staff, and reports included a heated argument with her male second-in-command that ended in him slamming his hand against a wall. Her inappropriate displays of anger got her fired; his seeming restraint saw him promoted in her place.
       </p>
+      <p><img src="https://dn-baiim.qbox.me/54d42e338453a9925f131e58.jpg" alt="The Office" /></p>
       <hr id="chapter001-text-element00007"
           class="implicit-break" />
       <p id="chapter001-text-element00008" class="first first-after-break">
@@ -112,6 +113,7 @@ options = {
       <p id="chapter001-text-element00009" class="subsequent subsequent-in-chapter">
       The more I read, the more curious I was. For many of us who do this for a living, being able to indulge that curiosity and find out what’s really going on is what makes any of it worth it, even when it turns out to be a lot of trouble. 
       </p>
+      <p><img src="https://dn-baiim.qbox.me/54bb4025fdadac375c311d69.jpg"  alt="The Office" /></p>
       <p id="chapter001-text-element00010" class="subsequent subsequent-in-chapter">
       That’s when I flew to San Francisco to meet Shanley Kane. 
       </p>
