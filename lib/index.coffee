@@ -44,16 +44,16 @@ class EPub
       @operator.author = ["anonymous"]
     if not @options.tempDir
       @options.tempDir = path.resolve __dirname, "../tempDir/"
-
-    @uuid = path.resolve @options.tempDir, uuid()
+    @id = uuid()
+    @uuid = path.resolve @options.tempDir, @id
     @options.uuid = @uuid
     console.log @uuid
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
 
       titleSlug = uslug content.title || "no title"
-      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
-      content.href = "#{index}_#{titleSlug}.xhtml"
+      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.html"
+      content.href = "#{index}_#{titleSlug}.html"
       content.id = "item_#{index}"
 
       #fix Author Array
@@ -104,9 +104,8 @@ class EPub
     fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
     _.each @options.content, (content)->
       data = """
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-      <html xmlns="http://www.w3.org/1999/xhtml">
+      <!DOCTYPE html>
+      <html lang="en">
         <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>#{content.title}</title>
@@ -134,7 +133,7 @@ class EPub
     ]).spread (data1, data2, data3)->
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data1)
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data2)
-      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.xhtml"), data3)
+      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.html"), data3)
       generateDefer.resolve()
     , (err)->
       console.error arguments
@@ -244,6 +243,8 @@ class EPub
             self.defer.reject(err)
           stream.on "end", ()->
             self.defer.resolve()
+            currentDir = self.options.tempDir
+            self.runCommand("rm -f -r #{self.id}/", {cwd: currentDir})
         , (err)->
           genDefer.reject(err)
       , (err)->

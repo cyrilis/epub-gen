@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+<html lang="en">
 <head>
     <title><%= title %></title>
     <link rel="stylesheet" type="text/css" href="style.css" />
@@ -9,7 +8,7 @@
 <h1 class="h1">Table Of Content</h1>
 <% content.forEach(function(content, index){ %>
 <p class="table-of-content">
-    <a href="<%= content.href %>"><%= content.title %>
+    <a href="<%= content.href %>"><%= (1+index) + ". " + (content.title || "Chapter "+ (1+index)) %>
         <% if(content.author.length){ %>
         - <small class="toc-author"><%= content.author.join(",") %></small>
         <% } %>
