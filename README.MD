@@ -17,6 +17,7 @@ firstly, make sure you have `zip` installed. then cd to your project dir, run:
 
 put this in your code:
 
+```javascript
     var Epub = require("epub-gen")
 
     new Epub(option [, output]).then(function(){
@@ -24,6 +25,7 @@ put this in your code:
    	}, function(err){
         console.error("Failed to generate Ebook because of ", err)
     })
+```
 
 #### option:
 - `title`:
