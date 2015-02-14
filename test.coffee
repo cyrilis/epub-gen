@@ -4,6 +4,7 @@ options = {
   title: "Simple Test Book"
   author: "Cyril Hou"
   publisher: "txt.sx"
+  cover: "/Users/Cyril/Code/pocket-to-epub/tempDir/3717f3a9-1405-42b8-87f1-fea20d9bc44b/OEBPS/cover.jpg"
   content: [
     {
       title: "只有青春期，没有青春"
@@ -94,7 +95,7 @@ options = {
       <p id="chapter001-text-element00003" class="subsequent subsequent-in-chapter">
       There are a few of my recent life experiences that I’d put into a category of “almost more trouble than it’s worth.” Training for a long distance race in single-digit weather; attempting to get Time Warner Cable to explain how it had double-charged me for six months of service; and now, writing about an up-and-coming website and its intriguing but controversial founder. All of these things have redeeming value, though unless you enjoy the idea of freezing slowly while still moving, or are a connoisseur of soul-destroying hold music, the first two have some obvious downsides. 
       </p>
-      <img src="https://avatars0.githubusercontent.com/u/464389" alt="Creative Commons Attribution-NonCommercial" />
+      <img src="http://www.lifeofpix.com/wp-content/uploads/2015/01/Life-of-Pix-free-stock-photos-road-wood-wild-turn-julien-sister-1440x960.jpg" alt="Creative Commons Attribution-NonCommercial" />
       <p id="chapter001-text-element00004" class="subsequent subsequent-in-chapter">
       The negative side of the third only became apparent when the subject in question, Shanley Kane, alerted anyone who was following her that my story was in the works, and attributed all manner of bad faith—and a few colorful adjectives—to me, my journalistic process, and my ethics. 
       </p>
@@ -104,7 +105,7 @@ options = {
       <p id="chapter001-text-element00006" class="subsequent subsequent-in-chapter">
       Earlier this year the New York Times fired its executive editor, Jill Abramson, with the ostensible rationale that she had not managed her newsroom well. When pressed to explain what that meant, Arthur Sulzberger, the paper’s publisher, talked specifically about her management style, which could be brusque and “bossy”. Others referred to her habit of shouting at staff, and reports included a heated argument with her male second-in-command that ended in him slamming his hand against a wall. Her inappropriate displays of anger got her fired; his seeming restraint saw him promoted in her place.
       </p>
-      <p><img src="https://dn-baiim.qbox.me/54d42e338453a9925f131e58.jpg" alt="The Office" /></p>
+      <p><img src="https://dn-baiim.qbox.me/54dc17332dad68402a6204a1.jpg" alt="The Office" /></p>
       <hr id="chapter001-text-element00007"
           class="implicit-break" />
       <p id="chapter001-text-element00008" class="first first-after-break">

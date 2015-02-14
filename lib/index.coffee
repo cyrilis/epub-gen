@@ -14,10 +14,16 @@ uuid = ->
     return (if c is 'x' then r else r&0x3|0x8).toString(16)
 
 class EPub
-  constructor: (@options)->
+  constructor: (@options, output)->
     self = @
-    self.images = []
     @defer = new Q.defer()
+
+    if output
+      @options.output = output
+
+    if not @options.output
+      @defer.reject(new Error("No output path"))
+
     if not options.title or not options.content
       console.log "options not valid"
       return false
@@ -40,10 +46,10 @@ class EPub
     @uuid = path.resolve @options.tempDir, uuid()
     @options.uuid = @uuid
     console.log @uuid
-
+    @options.images = []
     @options.content = _.map @options.content, (content, index)->
 
-      titleSlug = uslug content.title
+      titleSlug = uslug content.title || "no title"
       content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
       content.href = "#{index}_#{titleSlug}.xhtml"
       content.id = "item_#{index}"
@@ -65,16 +71,27 @@ class EPub
         url = $(elem).attr("src")
         id = uuid()
         $(elem).attr("src", "images/#{id}.jpg")
-        console.log {id, url}
-        self.images.push {id, url}
+        self.options.images.push {id, url}
       content.data = $.html()
       content
 
-    @generateTempFile()
+    @render()
     @defer.promise
 
+  render: ()->
+    self = @
+    @generateTempFile().then ()->
+      self.downloadAllImage().fin ()->
+        self.makeCover().then ()->
+          self.genEpub().then (result)->
+            self.defer.resolve(result)
+          , (err)->
+            self.defer.reject(err)
+        , (err)->
+          self.defer.reject(err)
 
   generateTempFile: ()->
+    generateDefer = new Q.defer()
     self = @
     if !fs.existsSync(@options.tempDir)
       fs.mkdirSync(@options.tempDir)
@@ -116,12 +133,37 @@ class EPub
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data1)
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data2)
       fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.xhtml"), data3)
-      self.downloadAllImage().fin ()->
-        self.genEpub()
+      generateDefer.resolve()
     , (err)->
       console.error arguments
-      self.defer.reject(arguments)
-      return false
+      generateDefer.reject(err)
+
+    generateDefer.promise
+
+  makeCover: ()->
+    userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
+    coverDefer = new Q.defer()
+    destPath = path.resolve @uuid, "./OEBPS/cover.jpg"
+    if @options.cover
+      writeStream = null
+      if @options.cover.slice(0,4) is "http"
+        writeStream = request.get(@options.cover).set 'User-Agent': userAgent
+        writeStream.pipe(fs.createWriteStream(destPath))
+      else
+        writeStream = fs.createReadStream(@options.cover)
+        writeStream.pipe(fs.createWriteStream(destPath))
+
+      writeStream.on "end", ()->
+        console.log "[Success] cover image downloaded successfully!"
+        coverDefer.resolve()
+      writeStream.on "error", (err)->
+        console.log "Error", err
+        console.log arguments
+        coverDefer.reject(err)
+    else
+      coverDefer.resolve()
+
+    coverDefer.promise
 
 
   downloadImage: (options)->  #{id, url}
@@ -130,9 +172,7 @@ class EPub
     if not options.url and typeof options isnt "string"
       return false
     downloadImageDefer = new Q.defer()
-
     requestAction = request.get(options.url).set 'User-Agent': userAgent
-
     filename = path.resolve self.uuid, ("./OEBPS/images/" + options.id + ".jpg")
 
     requestAction.pipe(fs.createWriteStream(filename))
@@ -142,8 +182,8 @@ class EPub
       fs.unlinkSync(filename)
       downloadImageDefer.reject(err)
 
-    requestAction.on 'end', (err, result)->
-      console.log "[Download Success]", filename
+    requestAction.on 'end', ()->
+      console.log "[Download Success]", options.url
       downloadImageDefer.resolve(options)
 
     downloadImageDefer.promise
@@ -152,11 +192,11 @@ class EPub
   downloadAllImage: ()->
     self = @
     imgDefer = new Q.defer()
-    if not self.images.length
+    if not self.options.images.length
       imgDefer.resolve()
     else
       deferArray = []
-      _.each self.images, (image)->
+      _.each self.options.images, (image)->
         deferArray.push self.downloadImage(image)
       Q.all deferArray
       .fin ()->
@@ -183,23 +223,32 @@ class EPub
     # Thanks to Paul Bradley
     # http://www.bradleymedia.org/gzip-markdown-epub/
 
+    genDefer = new Q.defer()
+
     self = @
-    console.log @uuid
     filename = "book.epub.zip"
     initCmd = "zip -X -0 #{filename} mimetype"
     zipCmd  = "zip -X -9 -r #{filename} * -x mimetype #{filename}"
-    #cleanUp = "mv #{filename} book.epub && rm -f -r META-INF OEBPS mimetype"
+    cleanUp = "mv #{filename} book.epub && rm -f -r META-INF OEBPS mimetype"
     cleanUp = "mv #{filename} book.epub"
     cwd = @uuid
     self.runCommand(initCmd, {cwd}).then ()->
       self.runCommand(zipCmd, {cwd}).then ()->
         self.runCommand(cleanUp, {cwd}).then ()->
-          self.defer.resolve self
+          stream = fs.createReadStream( path.resolve self.uuid, "book.epub" )
+          stream.pipe fs.createWriteStream self.options.output
+          stream.on "error", (err)->
+            console.error(err)
+            self.defer.reject(err)
+          stream.on "end", ()->
+            self.defer.resolve()
         , (err)->
-          self.reject(err)
+          genDefer.reject(err)
       , (err)->
-        self.reject(err)
+        genDefer.reject(err)
     , (err)->
-      self.reject(err)
+      genDefer.reject(err)
+
+    genDefer.promise
 
 module.exports = EPub
