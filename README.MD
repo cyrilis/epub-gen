@@ -73,7 +73,7 @@ if you don't want pass the output pass the output path as the second argument, y
                 title: "Chapter 1", // Optional
                 author: "author", // Optional
                 data: "<h1>Learning JavaScript Design Patterns</h1>"
-                +"<div lang="en"><div>.....</div>" // pass html string
+                +"<div lang=\"en\"><div>.....</div>" // pass html string
             },
             {
                 title: "Chapter 2",
