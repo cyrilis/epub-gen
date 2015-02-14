@@ -22,7 +22,9 @@ class EPub
       @options.output = output
 
     if not @options.output
+      console.error(new Error("No Output Path"))
       @defer.reject(new Error("No output path"))
+      return false
 
     if not options.title or not options.content
       console.log "options not valid"
