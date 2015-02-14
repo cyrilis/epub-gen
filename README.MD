@@ -58,7 +58,7 @@ if you don't want pass the output pass the output path as the second argument, y
 
 ------
 
-##Demo Code:
+## Demo Code:
 
 ```javascript
     var Epub = require("epub-gen")
