@@ -30,4 +30,5 @@ options = {
 }
 
 
-new EPub(options, path.resolve(__dirname, "./tempDir/book.epub"))
+new EPub(options, path.resolve(__dirname, "./tempDir/book.epub")).promise.then ()->
+  console.log "#{options.title} is generated successfully"

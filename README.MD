@@ -11,7 +11,7 @@ It's very fast, except the time to download images from the web.
 
 ## Usage:
 
-firstly, make sure you have `zip` installed. then cd to your project dir, run:
+Firstly, make sure you have `zip` installed. then cd to your project dir, run:
 
 	npm install epub-gen
 
@@ -20,7 +20,7 @@ put this in your code:
 ```javascript
     var Epub = require("epub-gen")
 
-    new Epub(option [, output]).then(function(){
+    new Epub(option [, output]).promise.then(function(){
         console.log("Ebook Generated Successfully!")
    	}, function(err){
         console.error("Failed to generate Ebook because of ", err)

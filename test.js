@@ -31,7 +31,9 @@
     ]
   };
 
-  new EPub(options, path.resolve(__dirname, "./tempDir/book.epub"));
+  new EPub(options, path.resolve(__dirname, "./tempDir/book.epub")).promise.then(function() {
+    return console.log("" + options.title + " is generated successfully");
+  });
 
 }).call(this);
 

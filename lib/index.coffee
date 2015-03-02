@@ -78,7 +78,8 @@ class EPub
       content
 
     @render()
-    @defer.promise
+    @promise = @defer.promise
+    @
 
   render: ()->
     self = @
