@@ -24,11 +24,12 @@
   },
   "homepage": "https://github.com/cyrilis/epub-gen",
   "dependencies": {
+    "cheerio": "^0.18.0",
+    "diacritics": "^1.2.1",
     "ejs": "^2.2.4",
     "q": "^1.1.2",
+    "superagent": "^0.21.0",
     "underscore": "^1.7.0",
-    "uslug": "^1.0.3",
-    "cheerio": "^0.18.0",
-    "superagent": "^0.21.0"
+    "uslug": "^1.0.3"
   }
 }

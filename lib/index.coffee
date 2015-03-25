@@ -7,6 +7,7 @@ uslug = require "uslug"
 ejs = require "ejs"
 cheerio = require "cheerio"
 request = require "superagent"
+removeDiacritics = require('diacritics').remove
 
 uuid = ->
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c)->
@@ -51,8 +52,7 @@ class EPub
     console.log @uuid
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
-
-      titleSlug = uslug content.title || "no title"
+      titleSlug = uslug removeDiacritics content.title || "no title"
       content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.html"
       content.href = "#{index}_#{titleSlug}.html"
       content.id = "item_#{index}"
