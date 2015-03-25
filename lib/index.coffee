@@ -34,6 +34,7 @@ class EPub
       description: options.title
       publisher: "TXT.SX"
       author: ["anonymous"]
+      tocTitle: "Table Of Content"
       date: new Date().toISOString()
       lang: "en"
     }, options

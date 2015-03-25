@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
-<h1 class="h1">Table Of Content</h1>
+<h1 class="h1"><%= tocTitle %></h1>
 <% content.forEach(function(content, index){ %>
 <p class="table-of-content">
     <a href="<%= content.href %>"><%= (1+index) + ". " + (content.title || "Chapter "+ (1+index)) %>
