@@ -42,6 +42,8 @@ put this in your code:
     If you really hate our css, you can pass css string to replace our default style. eg: `"body{background: #000}"`
 - `lang`:
     Language of the book in 2 letters code (optional). If not specified, will fallback to `en`.
+- `appendChapterTitles`:
+    Automatically append the chapter title at the beginning of each contents. You can disable that by specifying `false`.
 - `content`:
     Book Chapters content. It's should be an array of objects. eg. `[{title: "Chapter 1",data: "<div>..."}, {data: ""},...]`
 

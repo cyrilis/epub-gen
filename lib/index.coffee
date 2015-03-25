@@ -36,6 +36,7 @@ class EPub
       publisher: "TXT.SX"
       author: ["anonymous"]
       tocTitle: "Table Of Content"
+      appendChapterTitles: true
       date: new Date().toISOString()
       lang: "en"
     }, options
@@ -115,7 +116,7 @@ class EPub
         </head>
       <body>
       """
-      data += if content.title then "<h1>#{content.title}</h1>" else ""
+      data += if content.title and self.options.appendChapterTitles then "<h1>#{content.title}</h1>" else ""
       data += if content.title and content.author and content.author.length then "<p class='epub-author'>#{content.author.join(", ")}</p>" else ""
       data += if content.title and content.url then "<p class='epub-link'><a href='#{content.url}'>#{content.url}</a></p>" else ""
       data += "#{content.data}</body></html>"
