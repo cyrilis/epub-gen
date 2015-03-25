@@ -9,7 +9,7 @@ This epub library will generate temp html and download images in your DOMs, then
 It's very fast, except the time to download images from the web.
 
 
-## Usage:
+## Usage
 
 Firstly, make sure you have `zip` installed. then cd to your project dir, run:
 
@@ -27,7 +27,8 @@ put this in your code:
     })
 ```
 
-#### option:
+#### Options
+
 - `title`:
     Title of the book
 - `author`:
@@ -35,15 +36,25 @@ put this in your code:
 - `publisher`:
     Publisher name (optional)
 - `cover`:
-    Book cover image, File path(absolute path) or web url both ok. eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
+    Book cover image, File path (absolute path) or web url both ok. eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
 - `output`
     Out put path(absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
 - `css`:
     If you really hate our css, you can pass css string to replace our default style. eg: `"body{background: #000}"`
+- `lang`:
+    Language of the book in 2 letters code (optional). If not specified, will fallback to `en`.
+- `appendChapterTitles`:
+    Automatically append the chapter title at the beginning of each contents. You can disable that by specifying `false`.
+- `customOpfTemplatePath`:
+    Optional. For advanced customizations: absolute path to an OPF template.
+- `customNcxTocTemplatePath`:
+    Optional. For advanced customizations: absolute path to a NCX toc template.
+- `customHtmlTocTemplatePath`:
+    Optional. For advanced customizations: absolute path to a HTML toc template.
 - `content`:
     Book Chapters content. It's should be an array of objects. eg. `[{title: "Chapter 1",data: "<div>..."}, {data: ""},...]`
 
-    within each chapter object:
+    **Within each chapter object:**
 
     - `title`:
         optional, Chapter title
@@ -53,7 +64,7 @@ put this in your code:
         HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded.
 
 
-#### output
+#### Output
 if you don't want pass the output pass the output path as the second argument, you should specify output path as `option.outpath`
 
 ------

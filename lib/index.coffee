@@ -7,6 +7,7 @@ uslug = require "uslug"
 ejs = require "ejs"
 cheerio = require "cheerio"
 request = require "superagent"
+removeDiacritics = require('diacritics').remove
 
 uuid = ->
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c)->
@@ -34,8 +35,13 @@ class EPub
       description: options.title
       publisher: "TXT.SX"
       author: ["anonymous"]
+      tocTitle: "Table Of Content"
+      appendChapterTitles: true
       date: new Date().toISOString()
       lang: "en"
+      customOpfTemplatePath: null
+      customNcxTocTemplatePath: null
+      customHtmlTocTemplatePath: null
     }, options
 
     if _.isString @options.author
@@ -50,8 +56,7 @@ class EPub
     console.log @uuid
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
-
-      titleSlug = uslug content.title || "no title"
+      titleSlug = uslug removeDiacritics content.title || "no title"
       content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.html"
       content.href = "#{index}_#{titleSlug}.html"
       content.id = "item_#{index}"
@@ -92,6 +97,10 @@ class EPub
             self.defer.reject(err)
         , (err)->
           self.defer.reject(err)
+      , (err)->
+        self.defer.reject(err)
+    , (err)->
+      self.defer.reject(err)
 
   generateTempFile: ()->
     generateDefer = new Q.defer()
@@ -106,7 +115,7 @@ class EPub
     _.each @options.content, (content)->
       data = """
       <!DOCTYPE html>
-      <html lang="en">
+      <html lang="#{self.options.lang}">
         <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>#{content.title}</title>
@@ -114,7 +123,7 @@ class EPub
         </head>
       <body>
       """
-      data += if content.title then "<h1>#{content.title}</h1>" else ""
+      data += if content.title and self.options.appendChapterTitles then "<h1>#{content.title}</h1>" else ""
       data += if content.title and content.author and content.author.length then "<p class='epub-author'>#{content.author.join(", ")}</p>" else ""
       data += if content.title and content.url then "<p class='epub-link'><a href='#{content.url}'>#{content.url}</a></p>" else ""
       data += "#{content.data}</body></html>"
@@ -127,10 +136,25 @@ class EPub
     fs.mkdirSync(@uuid + "/META-INF")
     fs.writeFileSync( "#{@uuid}/META-INF/container.xml", """<?xml version="1.0" encoding="UTF-8" ?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>""")
 
+    opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "./content.ejs")
+    if !fs.existsSync(opfPath)
+      generateDefer.reject(new Error('Custom file to OPF template not found.'))
+      return generateDefer.promise
+
+    ncxTocPath = self.options.customNcxTocTemplatePath or path.resolve(__dirname , "./toc.ejs" )
+    if !fs.existsSync(ncxTocPath)
+      generateDefer.reject(new Error('Custom file the NCX toc template not found.'))
+      return generateDefer.promise
+
+    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "./content.html")
+    if !fs.existsSync(htmlTocPath)
+      generateDefer.reject(new Error('Custom file to HTML toc template not found.'))
+      return generateDefer.promise
+
     Q.all([
-      Q.nfcall ejs.renderFile, path.resolve(__dirname, "./content.ejs"), self.options
-      Q.nfcall ejs.renderFile, path.resolve( __dirname , "./toc.ejs" ), self.options
-      Q.nfcall ejs.renderFile, path.resolve(__dirname, "./content.html"), self.options
+      Q.nfcall ejs.renderFile, opfPath, self.options
+      Q.nfcall ejs.renderFile, ncxTocPath, self.options
+      Q.nfcall ejs.renderFile, htmlTocPath, self.options
     ]).spread (data1, data2, data3)->
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data1)
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data2)
