@@ -106,7 +106,7 @@ class EPub
     _.each @options.content, (content)->
       data = """
       <!DOCTYPE html>
-      <html lang="en">
+      <html lang="#{self.options.lang}">
         <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>#{content.title}</title>

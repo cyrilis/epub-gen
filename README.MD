@@ -40,6 +40,8 @@ put this in your code:
     Out put path(absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
 - `css`:
     If you really hate our css, you can pass css string to replace our default style. eg: `"body{background: #000}"`
+- `lang`:
+    Language of the book in 2 letters code (optional). If not specified, will fallback to `en`.
 - `content`:
     Book Chapters content. It's should be an array of objects. eg. `[{title: "Chapter 1",data: "<div>..."}, {data: ""},...]`
 
