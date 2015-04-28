@@ -61,7 +61,7 @@ put this in your code:
     - `author`:
         optional, if each book author is different, you can fill it.
     - `data`:
-        HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded.
+        HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded. With the upgrade is possible to use images that are in place (for this the path 	must start with file: //)
 
 
 #### Output
