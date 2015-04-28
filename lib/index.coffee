@@ -7,6 +7,7 @@ uslug = require "uslug"
 ejs = require "ejs"
 cheerio = require "cheerio"
 request = require "superagent"
+fsextra = require "fs-extra"
 removeDiacritics = require('diacritics').remove
 
 uuid = ->
@@ -198,21 +199,27 @@ class EPub
     if not options.url and typeof options isnt "string"
       return false
     downloadImageDefer = new Q.defer()
-    requestAction = request.get(options.url).set 'User-Agent': userAgent
-    filename = path.resolve self.uuid, ("./OEBPS/images/" + options.id + ".jpg")
+    if options.url.indexOf("file://") == 0
+      filename = path.resolve(self.uuid, "./OEBPS/images/" + options.id + ".jpg")
+      auxpath = options.url.substr(7)
+      fsextra.copySync(auxpath,filename)
+      return downloadImageDefer.resolve(options)
+    else
+      requestAction = request.get(options.url).set 'User-Agent': userAgent
+      filename = path.resolve self.uuid, ("./OEBPS/images/" + options.id + ".jpg")
 
-    requestAction.pipe(fs.createWriteStream(filename))
+      requestAction.pipe(fs.createWriteStream(filename))
 
-    requestAction.on 'error', (err)->
-      console.error '[Download Error]' ,'Error while downloading', options.url, err
-      fs.unlinkSync(filename)
-      downloadImageDefer.reject(err)
+      requestAction.on 'error', (err)->
+        console.error '[Download Error]' ,'Error while downloading', options.url, err
+        fs.unlinkSync(filename)
+        downloadImageDefer.reject(err)
 
-    requestAction.on 'end', ()->
-      console.log "[Download Success]", options.url
-      downloadImageDefer.resolve(options)
+      requestAction.on 'end', ()->
+        console.log "[Download Success]", options.url
+        downloadImageDefer.resolve(options)
 
-    downloadImageDefer.promise
+      downloadImageDefer.promise
 
 
   downloadAllImage: ()->
