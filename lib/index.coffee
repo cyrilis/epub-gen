@@ -114,13 +114,13 @@ class EPub
     fs.writeFileSync path.resolve(@uuid, "./OEBPS/style.css"), @options.css
     if self.options.fonts.length
       fs.mkdirSync(path.resolve @uuid, "./OEBPS/fonts")
-      _.each self.options.fonts, (font)->
+      @options.fonts = _.map @options.fonts, (font)->
         if !fs.existsSync(font)
           generateDefer.reject(new Error('Custom font not found at ' + font + '.'))
           return generateDefer.promise
         filename = path.basename(font)
         fsextra.copySync(font, path.resolve self.uuid, "./OEBPS/fonts/" + filename)
-        font = filename
+        filename
     fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
     _.each @options.content, (content)->
       data = """
