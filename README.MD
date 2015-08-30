@@ -49,7 +49,7 @@ put this in your code:
         font-family: "Merriweather";
         font-style: normal;
         font-weight: normal;
-        src : url("../fonts/Merriweather.ttf");
+        src : url("./fonts/Merriweather.ttf");
     }
     ```
 - `lang`:
