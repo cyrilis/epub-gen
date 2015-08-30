@@ -40,6 +40,7 @@ class EPub
       appendChapterTitles: true
       date: new Date().toISOString()
       lang: "en"
+      fonts: []
       customOpfTemplatePath: null
       customNcxTocTemplatePath: null
       customHtmlTocTemplatePath: null
@@ -112,6 +113,14 @@ class EPub
     fs.mkdirSync path.resolve(@uuid, "./OEBPS")
     @options.css ||= ".epub-author{color: #555;}.epub-link{margin-bottom: 30px;}.epub-link a{color: #666;font-size: 90%;}.toc-author{font-size: 90%;color: #555;}.toc-link{color: #999;font-size: 85%;display: block;}hr{border: 0;border-bottom: 1px solid #dedede;margin: 60px 10%;}"
     fs.writeFileSync path.resolve(@uuid, "./OEBPS/style.css"), @options.css
+    if self.options.fonts.length
+      fs.mkdirSync(path.resolve @uuid, "./OEBPS/fonts")
+      _.each self.options.fonts, (font)->
+        if !fs.existsSync(font)
+          generateDefer.reject(new Error('Custom font not found at ' + font + '.'))
+          return generateDefer.promise
+        filename = path.basename(font)
+        fsextra.copySync(font, path.resolve self.uuid, "./OEBPS/fonts/" + filename)
     fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
     _.each @options.content, (content)->
       data = """
