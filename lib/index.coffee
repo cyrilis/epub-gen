@@ -55,7 +55,6 @@ class EPub
     @id = uuid()
     @uuid = path.resolve @options.tempDir, @id
     @options.uuid = @uuid
-    console.log @uuid
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
       titleSlug = uslug removeDiacritics content.title || "no title"
@@ -121,6 +120,7 @@ class EPub
           return generateDefer.promise
         filename = path.basename(font)
         fsextra.copySync(font, path.resolve self.uuid, "./OEBPS/fonts/" + filename)
+        font = filename
     fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
     _.each @options.content, (content)->
       data = """
