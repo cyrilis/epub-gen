@@ -41,6 +41,17 @@ put this in your code:
     Out put path(absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
 - `css`:
     If you really hate our css, you can pass css string to replace our default style. eg: `"body{background: #000}"`
+- `fonts`:
+    Array of (absolute) paths to custom fonts to include on the book so they can be used on custom css. Ex: if you configure the array to `fonts: ['/path/to/Merriweather.ttf']` you can use the following on the custom CSS:
+
+    ```
+    @font-face {
+        font-family: "Merriweather";
+        font-style: normal;
+        font-weight: normal;
+        src : url("./fonts/Merriweather.ttf");
+    }
+    ```
 - `lang`:
     Language of the book in 2 letters code (optional). If not specified, will fallback to `en`.
 - `appendChapterTitles`:
