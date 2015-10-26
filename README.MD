@@ -1,5 +1,7 @@
 # Library to make Epub from HTML
 
+[![Join the chat at https://gitter.im/cyrilis/epub-gen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cyrilis/epub-gen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Generate EPUB books from HTML with simple API in Node.js.
 
 ------
