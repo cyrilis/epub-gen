@@ -58,8 +58,8 @@ class EPub
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
       titleSlug = uslug removeDiacritics content.title || "no title"
-      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.html"
-      content.href = "#{index}_#{titleSlug}.html"
+      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
+      content.href = "#{index}_#{titleSlug}.xhtml"
       content.id = "item_#{index}"
 
       #fix Author Array
@@ -156,7 +156,7 @@ class EPub
       generateDefer.reject(new Error('Custom file the NCX toc template not found.'))
       return generateDefer.promise
 
-    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "./content.html")
+    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "./content.xhtml")
     if !fs.existsSync(htmlTocPath)
       generateDefer.reject(new Error('Custom file to HTML toc template not found.'))
       return generateDefer.promise
@@ -168,7 +168,7 @@ class EPub
     ]).spread (data1, data2, data3)->
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data1)
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data2)
-      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.html"), data3)
+      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.xhtml"), data3)
       generateDefer.resolve()
     , (err)->
       console.error arguments
