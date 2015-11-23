@@ -16,7 +16,8 @@ uuid = ->
     return (if c is 'x' then r else r&0x3|0x8).toString(16)
 
 class EPub
-  constructor: (@options, output)->
+  constructor: (options, output)->
+    @options = options
     self = @
     @defer = new Q.defer()
 
@@ -55,6 +56,7 @@ class EPub
     @id = uuid()
     @uuid = path.resolve @options.tempDir, @id
     @options.uuid = @uuid
+    @options.id = @id
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
       titleSlug = uslug removeDiacritics content.title || "no title"
