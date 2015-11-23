@@ -37,7 +37,7 @@ class EPub
       description: options.title
       publisher: "anonymous"
       author: ["anonymous"]
-      tocTitle: "Table Of Content"
+      tocTitle: "Table Of Contents"
       appendChapterTitles: true
       date: new Date().toISOString()
       lang: "en"
