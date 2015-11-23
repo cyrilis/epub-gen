@@ -35,7 +35,7 @@ class EPub
 
     @options = _.extend {
       description: options.title
-      publisher: "TXT.SX"
+      publisher: "anonymous"
       author: ["anonymous"]
       tocTitle: "Table Of Content"
       appendChapterTitles: true
