@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<%- lang %>">
+<head>
+    <title><%= title %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<h1 class="h1"><%= tocTitle %></h1>
+<% content.forEach(function(content, index){ %>
+<p class="table-of-content">
+    <a href="<%= content.href %>"><%= (1+index) + ". " + (content.title || "Chapter "+ (1+index)) %>
+        <% if(content.author.length){ %>
+        - <small class="toc-author"><%= content.author.join(",") %></small>
+        <% } %>
+        <% if(content.url){ %><span class="toc-link"><%= content.url %></span><% }else{ %><span class="toc-link"></span><% } %>
+    </a>
+</p><% }) %>
+</body>
+</html>
