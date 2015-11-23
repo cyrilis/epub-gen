@@ -60,8 +60,8 @@ class EPub
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
       titleSlug = uslug removeDiacritics content.title || "no title"
-      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.html"
-      content.href = "#{index}_#{titleSlug}.html"
+      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
+      content.href = "#{index}_#{titleSlug}.xhtml"
       content.id = "item_#{index}"
 
       #fix Author Array
@@ -126,8 +126,8 @@ class EPub
     fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
     _.each @options.content, (content)->
       data = """
-      <!DOCTYPE html>
-      <html lang="#{self.options.lang}">
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+      <html xmlns="http://www.w3.org/1999/xhtml" lang="#{self.options.lang}">
         <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>#{content.title}</title>
@@ -148,6 +148,16 @@ class EPub
     fs.mkdirSync(@uuid + "/META-INF")
     fs.writeFileSync( "#{@uuid}/META-INF/container.xml", """<?xml version="1.0" encoding="UTF-8" ?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>""")
 
+    # write meta-inf/com.apple.ibooks.display-options.xml
+    fs.writeFileSync( "#{@uuid}/META-INF/com.apple.ibooks.display-options.xml","""
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <display_options>
+        <platform name="*">
+          <option name="specified-fonts">true</option>
+        </platform>
+      </display_options>
+    """)
+
     opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "./content.ejs")
     if !fs.existsSync(opfPath)
       generateDefer.reject(new Error('Custom file to OPF template not found.'))
@@ -158,7 +168,7 @@ class EPub
       generateDefer.reject(new Error('Custom file the NCX toc template not found.'))
       return generateDefer.promise
 
-    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "./content.html")
+    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "./content.xhtml")
     if !fs.existsSync(htmlTocPath)
       generateDefer.reject(new Error('Custom file to HTML toc template not found.'))
       return generateDefer.promise
@@ -170,7 +180,7 @@ class EPub
     ]).spread (data1, data2, data3)->
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/content.opf"), data1)
       fs.writeFileSync(path.resolve(self.uuid , "./OEBPS/toc.ncx"), data2)
-      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.html"), data3)
+      fs.writeFileSync(path.resolve(self.uuid, "./OEBPS/contents.xhtml"), data3)
       generateDefer.resolve()
     , (err)->
       console.error arguments
