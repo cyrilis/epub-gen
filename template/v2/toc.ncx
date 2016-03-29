@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ncx version="2005-1" xmlns="http://www.daisy.org/z3986/2005/ncx/">
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
     <head>
         <meta name="dtb:uid" content="urn:uuid:<%= uuid %>" />
         <meta name="dtb:generator" content="epub-gen"/>
@@ -18,7 +18,7 @@
             <navLabel>
                 <text><%= tocTitle %></text>
             </navLabel>
-            <content src="contents.<%= docType %>"/>
+            <content src="toc.xhtml"/>
         </navPoint>
         <% content.forEach(function(content, index){ %>
         <navPoint id="navPoint-<%= +index+1 %>" playOrder="<%= +index+1 %>" class="chapter">

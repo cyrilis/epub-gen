@@ -13,7 +13,7 @@
     </opf:metadata>
     <opf:manifest>
         <opf:item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
-        <opf:item id="contents" href="contents.<%= docType %>" media-type="<%= mediaType %>" />
+        <opf:item id="toc" href="toc.xhtml" media-type="<%= mediaType %>" />
         <opf:item id="image_cover" href="cover.jpg" media-type="image/jpeg" />
         <% images.forEach(function(image, index){ %>
         <opf:item id="image_<%= index %>" href="images/<%= image.id %>.jpg" media-type="image/jpeg" /><% }) %>
@@ -24,7 +24,7 @@
         <opf:item id="<%= font %>" href="fonts/<%= font %>" media-type="application/x-font-ttf" /><% }) %>
     </opf:manifest>
     <opf:spine toc="ncx">
-        <opf:itemref idref="contents" />
+        <opf:itemref idref="toc" />
         <% content.forEach(function(content){ %>
         <opf:itemref idref="<%= content.id %>" /><% }) %>
     </opf:spine>

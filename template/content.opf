@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" version="3.0" xml:lang="en" unique-identifier="BookId" xmlns:media="http://www.idpf.org/epub/vocab/overlays/#">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier id="BookId" >uuid:<%= id %></dc:identifier>
+        <meta id="meta-identifier" property="dcterms:identifier">BookId</meta>
+        <meta property="dcterms:title" id="meta-title"><%= title %></meta>
+        <dc:title><%= title %></dc:title>
+        <meta property="dcterms:language" id="meta-language"><%= lang || "en" %></meta>
+        <dc:language><%= lang || "en" %></dc:language>
+        <meta property="dcterms:modified"><%= (new Date()).toISOString().split(".")[0]+ "Z" %></meta>
+        <dc:creator id="creator"><%= author.length ? author.join(",") : author %></dc:creator>
+        <meta refines="#creator" property="file-as"><%= author.length ? author.join(",") : author %></meta>
+        <meta property="dcterms:publisher"><%= publisher || "anonymous" %></meta>
+        <dc:publisher><%= publisher || "anonymous" %></dc:publisher>
+        <% var date = new Date(); var year = date.getFullYear(); var month = date.getMonth() + 1; var day = date.getDate(); var stringDate = "" + year + "-" + month + "-" + day; %>
+        <meta property="dcterms:date"><%= stringDate %></meta>
+        <dc:date><%= stringDate %></dc:date>
+        <meta property="dcterms:rights">All rights reserved</meta>
+        <dc:rights>Copyright &#x00A9; <%= (new Date()).getFullYear() %> by <%= publisher || "anonymous" %></dc:rights>
+        <meta name="cover" content="image_cover"/>
+    </metadata>
+    <manifest>
+        <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+        <item id="toc" href="toc.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+        <item id="css" href="style.css" media-type="text/css" />
+        <item id="image_cover" href="cover.jpg" media-type="image/jpeg" />
+        <% images.forEach(function(image, index){ %>
+        <item id="image_<%= index %>" href="images/<%= image.id %>.jpg" media-type="image/jpeg" />
+        <% }) %>
+        <% content.forEach(function(content){ %>
+        <item id="pages_<%= content.id %>" href="<%= content.href %>" media-type="application/xhtml+xml" />
+        <% }) %>
+        <% fonts.forEach(function(font, index){%>
+        <item id="font_<%= index%>" href="fonts/<%= font %>" media-type="application/x-font-ttf" />
+        <%})%>
+    </manifest>
+
+    <spine toc="ncx">
+        <itemref idref="toc" />
+        <% content.forEach(function(content){ %>
+        <itemref idref="pages_<%= content.id %>"/>
+        <% }) %>
+    </spine>
+    <guide>
+        <reference type="text" title="Table of Content" href="toc.xhtml"/>
+    </guide>
+</package>

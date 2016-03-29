@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="<%- lang %>" lang="<%- lang %>">
+<head>
+    <title><%= title %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<nav id="toc" epub:type="toc">
+    <ol>
+        <li class="table-of-content">
+            <a href="toc.xhtml">- Table of Content -</a>
+        </li>
+        <% content.forEach(function(content, index){ %>
+        <li class="table-of-content">
+            <a href="<%= content.href %>"><%= (content.title || "Chapter "+ (1+index)) %><% if(content.author.length){ %> - <small class="toc-author"><%= content.author.join(",") %></small><% }%><% if(content.url){ %><span class="toc-link"><%= content.url %></span><% }%></a>
+        </li>
+        <% }) %>
+    </ol>
+</nav>
+
+</body>
+</html>

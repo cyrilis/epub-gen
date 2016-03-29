@@ -27,10 +27,11 @@
     "cheerio": "^0.18.0",
     "diacritics": "^1.2.1",
     "ejs": "^2.2.4",
+    "fs-extra": "^0.18.2",
     "q": "^1.1.2",
     "superagent": "^0.21.0",
     "underscore": "^1.7.0",
     "uslug": "^1.0.3",
-    "fs-extra": "^0.18.2"
+    "xhtml-purifier": "^0.4.0"
   }
 }
