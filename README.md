@@ -1,4 +1,4 @@
-# epub-gen - a library to make EPUBSs from HTML
+# epub-gen - a library to make EPUBs from HTML
 
 [![Join the chat at https://gitter.im/cyrilis/epub-gen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cyrilis/epub-gen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -17,7 +17,7 @@ First, make sure you have `zip` installed. then cd to your project dir, run:
 
 	npm install epub-gen
 
-Put this in your code:
+Then put this in your code:
 
 ```javascript
     var Epub = require("epub-gen")
@@ -42,7 +42,7 @@ Put this in your code:
 - `output`
     Out put path (absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
 - `version`:
-    You can specify the version of the generated EPUB, `3` the latest version (http://idpf.org/epub/30) or `2` the previous version (http://idpf.org/epub/201) for better compatibility with older readers, defaults to `3`
+    You can specify the version of the generated EPUB, `3` the latest version (http://idpf.org/epub/30) or `2` the previous version (http://idpf.org/epub/201, for better compatibility with older readers). If not specified, will fallback to `3`.
 - `css`:
     If you really hate our css, you can pass css string to replace our default style. eg: `"body{background: #000}"`
 - `fonts`:
@@ -120,9 +120,9 @@ If you don't want pass the output pass the output path as the second argument, y
 
 ## Demo Preview:
 
-![Demo File Preview](http://s3.again.cc/capture/2015-02-14_163343.png)
+![Demo Preview](demo_preview.png?raw=true)
 
-Simple html from: http://addyosmani.com/resources/essentialjsdesignpatterns/book/
+From Lewis Carroll "Alice's Adventures in Wonderland", based on text at https://www.cs.cmu.edu/~rgs/alice-table.html and images from http://www.alice-in-wonderland.net/resources/pictures/alices-adventures-in-wonderland.
 
 ## License
 
