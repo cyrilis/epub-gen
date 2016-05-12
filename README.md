@@ -1,4 +1,4 @@
-# Library to make Epub from HTML
+# epub-gen - a library to make EPUBSs from HTML
 
 [![Join the chat at https://gitter.im/cyrilis/epub-gen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cyrilis/epub-gen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -13,11 +13,11 @@ It's very fast, except the time to download images from the web.
 
 ## Usage
 
-Firstly, make sure you have `zip` installed. then cd to your project dir, run:
+First, make sure you have `zip` installed. then cd to your project dir, run:
 
 	npm install epub-gen
 
-put this in your code:
+Put this in your code:
 
 ```javascript
     var Epub = require("epub-gen")
@@ -34,13 +34,15 @@ put this in your code:
 - `title`:
     Title of the book
 - `author`:
-    Name of the author for the book, string or array both Okay, eg. `"Alice"` or `["Alice", "Bob"]`
+    Name of the author for the book, string or array, eg. `"Alice"` or `["Alice", "Bob"]`
 - `publisher`:
     Publisher name (optional)
 - `cover`:
-    Book cover image, File path (absolute path) or web url both ok. eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
+    Book cover image, File path (absolute path) or web url, eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
 - `output`
-    Out put path(absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
+    Out put path (absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
+- `version`:
+    You can specify the version of the generated EPUB, `3` the latest version (http://idpf.org/epub/30) or `2` the previous version (http://idpf.org/epub/201) for better compatibility with older readers, defaults to `3`
 - `css`:
     If you really hate our css, you can pass css string to replace our default style. eg: `"body{background: #000}"`
 - `fonts`:
@@ -74,11 +76,11 @@ put this in your code:
     - `author`:
         optional, if each book author is different, you can fill it.
     - `data`:
-        HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded. With the upgrade is possible to use images that are in place (for this the path 	must start with file: //)
+        HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded. With the upgrade is possible to use local images (for this the path 	must start with file: //)
 
 
 #### Output
-if you don't want pass the output pass the output path as the second argument, you should specify output path as `option.outpath`
+If you don't want pass the output pass the output path as the second argument, you should specify output path as `option.output`.
 
 ------
 
