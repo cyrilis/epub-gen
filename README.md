@@ -122,7 +122,7 @@ If you don't want pass the output pass the output path as the second argument, y
 
 ![Demo Preview](demo_preview.png?raw=true)
 
-From Lewis Carroll "Alice's Adventures in Wonderland", based on text at https://www.cs.cmu.edu/~rgs/alice-table.html and images from http://www.alice-in-wonderland.net/resources/pictures/alices-adventures-in-wonderland.
+_From Lewis Carroll "Alice's Adventures in Wonderland", based on text at https://www.cs.cmu.edu/~rgs/alice-table.html and images from http://www.alice-in-wonderland.net/resources/pictures/alices-adventures-in-wonderland._
 
 ## License
 
