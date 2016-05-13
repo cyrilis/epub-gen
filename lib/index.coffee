@@ -46,7 +46,6 @@ class EPub
       customNcxTocTemplatePath: null
       customHtmlTocTemplatePath: null
       version: 3
-      mediaType : "application/xhtml+xml"
     }, options
 
     if @options.version is 2
