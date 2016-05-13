@@ -28,8 +28,8 @@
         <item id="image_<%= index %>" href="images/<%= image.id %>.jpg" media-type="image/jpeg" />
         <% }) %>
         
-        <% content.forEach(function(content){ %>
-        <item id="content_<%= content.id %>" href="<%= content.href %>" media-type="application/xhtml+xml" />
+        <% content.forEach(function(content, index){ %>
+        <item id="content_<%= index %>_<%= content.id %>" href="<%= content.href %>" media-type="application/xhtml+xml" />
         <% }) %>
 
         <% fonts.forEach(function(font, index) { %>
@@ -39,8 +39,8 @@
 
     <spine toc="ncx">
         <itemref idref="toc" />
-        <% content.forEach(function(content){ %>
-        <itemref idref="content_<%= content.id %>" />
+        <% content.forEach(function(content, index){ %>
+        <itemref idref="content_<%= index %>_<%= content.id %>" />
         <% }) %>
     </spine>
     <guide />

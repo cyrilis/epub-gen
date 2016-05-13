@@ -14,18 +14,20 @@
         <text><%= author %></text>
     </docAuthor>
     <navMap>
-        <navPoint id="navPoint-0" playOrder="0" class="chapter">
+        <navPoint id="toc" playOrder="0" class="chapter">
             <navLabel>
                 <text><%= tocTitle %></text>
             </navLabel>
             <content src="toc.xhtml"/>
         </navPoint>
+
         <% content.forEach(function(content, index){ %>
-        <navPoint id="navPoint-<%= +index+1 %>" playOrder="<%= +index+1 %>" class="chapter">
+        <navPoint id="content_<%= index %>_<%= content.id %>" playOrder="<%= +index+1 %>" class="chapter">
             <navLabel>
                 <text><%= (1+index) + ". " + (content.title || "Chapter " + (1+index))%></text>
             </navLabel>
             <content src="<%= content.href %>"/>
-        </navPoint><% }) %>
+        </navPoint>
+        <% }) %>
     </navMap>
 </ncx>
