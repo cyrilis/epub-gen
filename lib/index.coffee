@@ -55,7 +55,7 @@ class EPub
 <html xmlns="http://www.w3.org/1999/xhtml" lang="#{self.options.lang}">
 """
     else
-      @options.docHeader = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      @options.docHeader = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="#{self.options.lang}">
 """
@@ -185,7 +185,7 @@ class EPub
       data += "#{content.data}</body></html>"
       fs.writeFileSync(content.filePath, data)
 
-    # write minetype file
+    # write mimetype file
     fs.writeFileSync(@uuid + "/mimetype", "application/epub+zip")
 
     # write meta-inf/container.xml
@@ -202,17 +202,17 @@ class EPub
       </display_options>
     """)
 
-    opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "../template#{if self.options.version is 2 then "/v2" else ""}/content.opf")
+    opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/content.opf")
     if !fs.existsSync(opfPath)
       generateDefer.reject(new Error('Custom file to OPF template not found.'))
       return generateDefer.promise
 
-    ncxTocPath = self.options.customNcxTocTemplatePath or path.resolve(__dirname , "../template#{if self.options.version is 2 then "/v2" else ""}/toc.ncx" )
+    ncxTocPath = self.options.customNcxTocTemplatePath or path.resolve(__dirname , "../templates/epub#{self.options.version}/toc.ncx" )
     if !fs.existsSync(ncxTocPath)
       generateDefer.reject(new Error('Custom file the NCX toc template not found.'))
       return generateDefer.promise
 
-    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "../template#{if self.options.version is 2 then "/v2" else ""}/toc.xhtml")
+    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/toc.xhtml")
     if !fs.existsSync(htmlTocPath)
       generateDefer.reject(new Error('Custom file to HTML toc template not found.'))
       return generateDefer.promise

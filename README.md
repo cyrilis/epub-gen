@@ -93,7 +93,7 @@ If you don't want pass the output pass the output path as the second argument, y
         title: "Alice's Adventures in Wonderland", // *Required, title of the book.
         author: "Lewis Carroll", // *Required, name of the author.
         publisher: "Macmillan & Co.", // optional
-        cover: "http://demo.com/url-to-cover-image.jpg", // Url or File path both ok.
+        cover: "http://demo.com/url-to-cover-image.jpg", // Url or File path, both ok.
         content: [
             {
                 title: "About the author", // Optional
