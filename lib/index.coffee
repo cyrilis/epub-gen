@@ -201,17 +201,17 @@ class EPub
       </display_options>
     """)
 
-    opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/content.opf")
+    opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/content.opf.ejs")
     if !fs.existsSync(opfPath)
       generateDefer.reject(new Error('Custom file to OPF template not found.'))
       return generateDefer.promise
 
-    ncxTocPath = self.options.customNcxTocTemplatePath or path.resolve(__dirname , "../templates/epub#{self.options.version}/toc.ncx" )
+    ncxTocPath = self.options.customNcxTocTemplatePath or path.resolve(__dirname , "../templates/epub#{self.options.version}/toc.ncx.ejs" )
     if !fs.existsSync(ncxTocPath)
       generateDefer.reject(new Error('Custom file the NCX toc template not found.'))
       return generateDefer.promise
 
-    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/toc.xhtml")
+    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/toc.xhtml.ejs")
     if !fs.existsSync(htmlTocPath)
       generateDefer.reject(new Error('Custom file to HTML toc template not found.'))
       return generateDefer.promise

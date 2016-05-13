@@ -29,7 +29,7 @@
         <% }) %>
         
         <% content.forEach(function(content){ %>
-        <item id="pages_<%= content.id %>" href="<%= content.href %>" media-type="application/xhtml+xml" />
+        <item id="content_<%= content.id %>" href="<%= content.href %>" media-type="application/xhtml+xml" />
         <% }) %>
 
         <% fonts.forEach(function(font, index) { %>
@@ -40,7 +40,7 @@
     <spine toc="ncx">
         <itemref idref="toc" />
         <% content.forEach(function(content){ %>
-        <itemref idref="pages_<%= content.id %>" />
+        <itemref idref="content_<%= content.id %>" />
         <% }) %>
     </spine>
     <guide />
