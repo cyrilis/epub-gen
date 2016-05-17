@@ -14,7 +14,7 @@
     <opf:manifest>
         <opf:item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
         <opf:item id="toc" href="toc.xhtml" media-type="<%= mediaType %>" />
-        <opf:item id="image_cover" href="cover.jpg" media-type="image/jpeg" />
+        <opf:item id="image_cover" href="cover.<%= _coverExtension %>" media-type="<%= _coverMediaType %>" />
         <% images.forEach(function(image, index){ %>
         <opf:item id="image_<%= index %>" href="images/<%= image.id %>.<%= image.extension %>" media-type="<%= image.mediaType %>" /><% }) %>
         <% content.forEach(function(content){ %>

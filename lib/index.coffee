@@ -129,6 +129,10 @@ class EPub
       content.data = $.xml()
       content
 
+    if @options.cover
+      @options._coverMediaType = mime.lookup @options.cover
+      @options._coverExtension = mime.extension @options._coverMediaType
+
     @render()
     @promise = @defer.promise
     @
@@ -239,8 +243,8 @@ class EPub
   makeCover: ()->
     userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
     coverDefer = new Q.defer()
-    destPath = path.resolve @uuid, "./OEBPS/cover.jpg"
     if @options.cover
+      destPath = path.resolve @uuid, ("./OEBPS/cover." + @options._coverExtension)
       writeStream = null
       if @options.cover.slice(0,4) is "http"
         writeStream = request.get(@options.cover).set 'User-Agent': userAgent
