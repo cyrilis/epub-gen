@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf"
+         version="2.0"
+         unique-identifier="BookId">
+
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"
+              xmlns:opf="http://www.idpf.org/2007/opf">
+
+        <dc:identifier id="BookId" opf:scheme="URN">uuid:<%= id %></dc:identifier>
+        <dc:title><%= title %></dc:title>
+        <dc:description><%= description %></dc:description>
+        <dc:publisher><%= publisher || "anonymous" %></dc:publisher>
+        <dc:creator opf:role="aut" opf:file-as="<%= author.length ? author.join(",") : author %>"><%= author.length ? author.join(",") : author %></dc:creator>
+        <dc:date opf:event="modification"><%= date %></dc:date>
+        <dc:language><%= lang || "en" %></dc:language>
+        <meta name="cover" content="image_cover" />
+        <meta name="generator" content="epub-gen" />
+
+    </metadata>
+
+    <manifest>
+        <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+        <item id="toc" href="toc.xhtml" media-type="application/xhtml+xml" />
+        <item id="css" href="style.css" media-type="text/css" />
+        <item id="image_cover" href="cover.jpg" media-type="image/jpeg" />
+        
+        <% images.forEach(function(image, index){ %>
+        <item id="image_<%= index %>" href="images/<%= image.id %>.jpg" media-type="image/jpeg" />
+        <% }) %>
+        
+        <% content.forEach(function(content, index){ %>
+        <item id="content_<%= index %>_<%= content.id %>" href="<%= content.href %>" media-type="application/xhtml+xml" />
+        <% }) %>
+
+        <% fonts.forEach(function(font, index) { %>
+        <item id="font_<%= index %>" href="fonts/<%= font %>" media-type="application/x-font-ttf" />
+        <% }) %>
+    </manifest>
+
+    <spine toc="ncx">
+        <itemref idref="toc" />
+        <% content.forEach(function(content, index){ %>
+        <itemref idref="content_<%= index %>_<%= content.id %>" />
+        <% }) %>
+    </spine>
+    <guide />
+</package>

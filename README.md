@@ -1,4 +1,4 @@
-# Library to make Epub from HTML
+# epub-gen - a library to make EPUBs from HTML
 
 [![Join the chat at https://gitter.im/cyrilis/epub-gen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cyrilis/epub-gen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -13,11 +13,11 @@ It's very fast, except the time to download images from the web.
 
 ## Usage
 
-Firstly, make sure you have `zip` installed. then cd to your project dir, run:
+First, make sure you have `zip` installed. then cd to your project dir, run:
 
 	npm install epub-gen
 
-put this in your code:
+Then put this in your code:
 
 ```javascript
     var Epub = require("epub-gen")
@@ -34,13 +34,15 @@ put this in your code:
 - `title`:
     Title of the book
 - `author`:
-    Name of the author for the book, string or array both Okay, eg. `"Alice"` or `["Alice", "Bob"]`
+    Name of the author for the book, string or array, eg. `"Alice"` or `["Alice", "Bob"]`
 - `publisher`:
     Publisher name (optional)
 - `cover`:
-    Book cover image, File path (absolute path) or web url both ok. eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
+    Book cover image, File path (absolute path) or web url, eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
 - `output`
-    Out put path(absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
+    Out put path (absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
+- `version`:
+    You can specify the version of the generated EPUB, `3` the latest version (http://idpf.org/epub/30) or `2` the previous version (http://idpf.org/epub/201, for better compatibility with older readers). If not specified, will fallback to `3`.
 - `css`:
     If you really hate our css, you can pass css string to replace our default style. eg: `"body{background: #000}"`
 - `fonts`:
@@ -74,11 +76,11 @@ put this in your code:
     - `author`:
         optional, if each book author is different, you can fill it.
     - `data`:
-        HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded. With the upgrade is possible to use images that are in place (for this the path 	must start with file: //)
+        HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded. With the upgrade is possible to use local images (for this the path 	must start with file: //)
 
 
 #### Output
-if you don't want pass the output pass the output path as the second argument, you should specify output path as `option.outpath`
+If you don't want pass the output pass the output path as the second argument, you should specify output path as `option.output`.
 
 ------
 
@@ -88,20 +90,20 @@ if you don't want pass the output pass the output path as the second argument, y
     var Epub = require("epub-gen")
 
     var option = {
-        title: "Simple Book", // *Required, title of the book.
-        author: "Me", // *Required, name of the author.
-        publisher: "Demo Inc.", // optional
-        cover: "http://demo.com/url-to-cover-image.jpg", // Url or File path both ok.
+        title: "Alice's Adventures in Wonderland", // *Required, title of the book.
+        author: "Lewis Carroll", // *Required, name of the author.
+        publisher: "Macmillan & Co.", // optional
+        cover: "http://demo.com/url-to-cover-image.jpg", // Url or File path, both ok.
         content: [
             {
-                title: "Chapter 1", // Optional
-                author: "author", // Optional
-                data: "<h1>Learning JavaScript Design Patterns</h1>"
-                +"<div lang=\"en\"><div>.....</div>" // pass html string
+                title: "About the author", // Optional
+                author: "John Doe", // Optional
+                data: "<h2>Charles Lutwidge Dodgson</h2>"
+                +"<div lang=\"en\">Better known by the pen name Lewis Carroll...</div>" // pass html string
             },
             {
-                title: "Chapter 2",
-                data: "<html><head> ......</html>"
+                title: "Down the Rabbit Hole",
+                data: "<p>Alice was beginning to get very tired...</p>"
             },
             {
                 ...
@@ -118,9 +120,9 @@ if you don't want pass the output pass the output path as the second argument, y
 
 ## Demo Preview:
 
-![Demo File Preview](http://s3.again.cc/capture/2015-02-14_163343.png)
+![Demo Preview](demo_preview.png?raw=true)
 
-Simple html from: http://addyosmani.com/resources/essentialjsdesignpatterns/book/
+_From Lewis Carroll "Alice's Adventures in Wonderland", based on text at https://www.cs.cmu.edu/~rgs/alice-table.html and images from http://www.alice-in-wonderland.net/resources/pictures/alices-adventures-in-wonderland._
 
 ## License
 
