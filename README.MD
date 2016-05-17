@@ -38,7 +38,7 @@ put this in your code:
 - `publisher`:
     Publisher name (optional)
 - `cover`:
-    Book cover image, File path (absolute path) or web url both ok. eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
+    Book cover image (optional), File path (absolute path) or web url both ok. eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
 - `output`
     Out put path(absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
 - `css`:
