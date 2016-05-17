@@ -47,7 +47,6 @@ class EPub
       customNcxTocTemplatePath: null
       customHtmlTocTemplatePath: null
       version: 3
-      mediaType : "application/xhtml+xml"
     }, options
 
     if @options.version is 2
@@ -56,7 +55,7 @@ class EPub
 <html xmlns="http://www.w3.org/1999/xhtml" lang="#{self.options.lang}">
 """
     else
-      @options.docHeader = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      @options.docHeader = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="#{self.options.lang}">
 """
@@ -90,13 +89,12 @@ class EPub
       #content.data = content.data.match(reg)?[1] || content.data
       ## replace with cheerio
       allowedAttributes = ["content", "alt" ,"id","title", "src", "href", "about", "accesskey", "aria-activedescendant", "aria-atomic", "aria-autocomplete", "aria-busy", "aria-checked", "aria-controls", "aria-describedat", "aria-describedby", "aria-disabled", "aria-dropeffect", "aria-expanded", "aria-flowto", "aria-grabbed", "aria-haspopup", "aria-hidden", "aria-invalid", "aria-label", "aria-labelledby", "aria-level", "aria-live", "aria-multiline", "aria-multiselectable", "aria-orientation", "aria-owns", "aria-posinset", "aria-pressed", "aria-readonly", "aria-relevant", "aria-required", "aria-selected", "aria-setsize", "aria-sort", "aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-valuetext", "class", "content", "contenteditable", "contextmenu", "datatype", "dir", "draggable", "dropzone", "hidden", "hreflang", "id", "inlist", "itemid", "itemref", "itemscope", "itemtype", "lang", "media", "ns1:type", "ns2:alphabet", "ns2:ph", "onabort", "onblur", "oncanplay", "oncanplaythrough", "onchange", "onclick", "oncontextmenu", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave", "ondragover", "ondragstart", "ondrop", "ondurationchange", "onemptied", "onended", "onerror", "onfocus", "oninput", "oninvalid", "onkeydown", "onkeypress", "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onmousewheel", "onpause", "onplay", "onplaying", "onprogress", "onratechange", "onreadystatechange", "onreset", "onscroll", "onseeked", "onseeking", "onselect", "onshow", "onstalled", "onsubmit", "onsuspend", "ontimeupdate", "onvolumechange", "onwaiting", "prefix", "property", "rel", "resource", "rev", "role", "spellcheck", "style", "tabindex", "target", "title", "type", "typeof", "vocab", "xml:base", "xml:lang", "xml:space"]
-      allowedV2Tags = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "dl", "dt", "dd", "address", "hr", "pre", "blockquote", "center", "ins", "del", "a", "span", "bdo", "br", "em", "strong", "dfn", "code", "samp", "kbd", "bar", "cite", "abbr", "acronym", "q", "sub", "sup", "tt", "i", "b", "big", "small", "u", "s", "strike", "basefont", "font", "object", "param", "img", "table", "caption", "colgroup", "col", "thead", "tfoot", "tbody", "tr", "th", "td", "embed", "applet", "iframe", "img", "map", "noscript", "ns:svg", "object", "script", "table", "tt", "var"]
-#      content.data = require('xhtml-purifier').purify(content.data);
+      allowedXhtml11Tags = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "dl", "dt", "dd", "address", "hr", "pre", "blockquote", "center", "ins", "del", "a", "span", "bdo", "br", "em", "strong", "dfn", "code", "samp", "kbd", "bar", "cite", "abbr", "acronym", "q", "sub", "sup", "tt", "i", "b", "big", "small", "u", "s", "strike", "basefont", "font", "object", "param", "img", "table", "caption", "colgroup", "col", "thead", "tfoot", "tbody", "tr", "th", "td", "embed", "applet", "iframe", "img", "map", "noscript", "ns:svg", "object", "script", "table", "tt", "var"]
       content.data = content.data.replace(/\&/g, "&amp;")
       $ = cheerio.load content.data, {xmlMode: true, lowerCaseTags: true, ignoreWhitespace: true, recognizeSelfClosing: true}
       if $("body").length
         $ = cheerio.load $("body").html(), {xmlMode: true, lowerCaseTags: true, ignoreWhitespace: true, recognizeSelfClosing: true}
-      $("*").each (index, elem)->
+      $($("*").get().reverse()).each (elemIndex, elem)->
         attrs = elem.attribs
         that = @
         if that.name in ["img", "br", "hr"]
@@ -112,9 +110,9 @@ class EPub
           else
             $(that).removeAttr(k)
         if self.options.version is 2
-          if that.name in allowedV2Tags
+          if that.name in allowedXhtml11Tags
           else
-            console.log that.name, " isnt allowed here."
+            console.log "Warning (content[" + index + "]):", that.name, "tag isn't allowed on EPUB 2/XHTML 1.1 DTD."
             child = $(that).html()
             $(that).replaceWith($("<div>" + child + "</div>"))
 
@@ -193,7 +191,7 @@ class EPub
       data += "#{content.data}</body></html>"
       fs.writeFileSync(content.filePath, data)
 
-    # write minetype file
+    # write mimetype file
     fs.writeFileSync(@uuid + "/mimetype", "application/epub+zip")
 
     # write meta-inf/container.xml
@@ -210,17 +208,17 @@ class EPub
       </display_options>
     """)
 
-    opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "../template#{if self.options.version is 2 then "/v2" else ""}/content.opf")
+    opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/content.opf.ejs")
     if !fs.existsSync(opfPath)
       generateDefer.reject(new Error('Custom file to OPF template not found.'))
       return generateDefer.promise
 
-    ncxTocPath = self.options.customNcxTocTemplatePath or path.resolve(__dirname , "../template#{if self.options.version is 2 then "/v2" else ""}/toc.ncx" )
+    ncxTocPath = self.options.customNcxTocTemplatePath or path.resolve(__dirname , "../templates/toc.ncx.ejs" )
     if !fs.existsSync(ncxTocPath)
       generateDefer.reject(new Error('Custom file the NCX toc template not found.'))
       return generateDefer.promise
 
-    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "../template#{if self.options.version is 2 then "/v2" else ""}/toc.xhtml")
+    htmlTocPath = self.options.customHtmlTocTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/toc.xhtml.ejs")
     if !fs.existsSync(htmlTocPath)
       generateDefer.reject(new Error('Custom file to HTML toc template not found.'))
       return generateDefer.promise

@@ -32,7 +32,6 @@
     "q": "^1.1.2",
     "superagent": "^0.21.0",
     "underscore": "^1.7.0",
-    "uslug": "^1.0.3",
-    "xhtml-purifier": "^0.4.0"
+    "uslug": "^1.0.3"
   }
 }
