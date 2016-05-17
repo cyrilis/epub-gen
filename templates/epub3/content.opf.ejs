@@ -35,10 +35,13 @@
         <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
         <item id="toc" href="toc.xhtml" media-type="application/xhtml+xml" properties="nav"/>
         <item id="css" href="style.css" media-type="text/css" />
-        <item id="image_cover" href="cover.jpg" media-type="image/jpeg" />
+
+        <% if(locals.cover) { %>
+        <item id="image_cover" href="cover.<%= _coverExtension %>" media-type="<%= _coverMediaType %>" />
+        <% } %>
         
         <% images.forEach(function(image, index){ %>
-        <item id="image_<%= index %>" href="images/<%= image.id %>.jpg" media-type="image/jpeg" />
+        <item id="image_<%= index %>" href="images/<%= image.id %>.<%= image.extension %>" media-type="<%= image.mediaType %>" />
         <% }) %>
         
         <% content.forEach(function(content, index){ %>

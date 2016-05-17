@@ -8,7 +8,8 @@ ejs = require "ejs"
 cheerio = require "cheerio"
 request = require "superagent"
 fsextra = require "fs-extra"
-removeDiacritics = require('diacritics').remove
+removeDiacritics = require("diacritics").remove
+mime = require "mime"
 
 uuid = ->
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c)->
@@ -118,11 +119,17 @@ class EPub
       $("img").each (index, elem)->
         url = $(elem).attr("src")
         id = uuid()
-        $(elem).attr("src", "images/#{id}.jpg")
+        mediaType = mime.lookup url
+        extension = mime.extension mediaType
+        $(elem).attr("src", "images/#{id}.#{extension}")
         dir = content.dir
-        self.options.images.push {id, url, dir}
+        self.options.images.push {id, url, dir, mediaType, extension}
       content.data = $.xml()
       content
+
+    if @options.cover
+      @options._coverMediaType = mime.lookup @options.cover
+      @options._coverExtension = mime.extension @options._coverMediaType
 
     @render()
     @promise = @defer.promise
@@ -234,8 +241,8 @@ class EPub
   makeCover: ()->
     userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
     coverDefer = new Q.defer()
-    destPath = path.resolve @uuid, "./OEBPS/cover.jpg"
     if @options.cover
+      destPath = path.resolve @uuid, ("./OEBPS/cover." + @options._coverExtension)
       writeStream = null
       if @options.cover.slice(0,4) is "http"
         writeStream = request.get(@options.cover).set 'User-Agent': userAgent
@@ -257,19 +264,18 @@ class EPub
     coverDefer.promise
 
 
-  downloadImage: (options)->  #{id, url}
+  downloadImage: (options)->  #{id, url, mediaType}
     self = @
     userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
     if not options.url and typeof options isnt "string"
       return false
     downloadImageDefer = new Q.defer()
+    filename = path.resolve self.uuid, ("./OEBPS/images/" + options.id + "." + options.extension)
     if options.url.indexOf("file://") == 0
-      filename = path.resolve(self.uuid, "./OEBPS/images/" + options.id + ".jpg")
       auxpath = options.url.substr(7)
       fsextra.copySync(auxpath,filename)
       return downloadImageDefer.resolve(options)
     else
-      filename = path.resolve self.uuid, ("./OEBPS/images/" + options.id + ".jpg")
       if options.url.indexOf("http") is 0
         requestAction = request.get(options.url).set 'User-Agent': userAgent
         requestAction.pipe(fs.createWriteStream(filename))
