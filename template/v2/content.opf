@@ -16,7 +16,7 @@
         <opf:item id="toc" href="toc.xhtml" media-type="<%= mediaType %>" />
         <opf:item id="image_cover" href="cover.jpg" media-type="image/jpeg" />
         <% images.forEach(function(image, index){ %>
-        <opf:item id="image_<%= index %>" href="images/<%= image.id %>.jpg" media-type="image/jpeg" /><% }) %>
+        <opf:item id="image_<%= index %>" href="images/<%= image.id %>.<%= image.extension %>" media-type="<%= image.mediaType %>" /><% }) %>
         <% content.forEach(function(content){ %>
         <opf:item id="<%= content.id %>" href="<%= content.href %>" media-type="<%= mediaType %>" /><% }) %>
         <opf:item id="style-css" href="style.css" media-type="text/css" />
