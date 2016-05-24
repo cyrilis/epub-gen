@@ -179,7 +179,7 @@ class EPub
     _.each @options.content, (content)->
       data = """#{self.options.docHeader}
         <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="UTF-8" />
         <title>#{content.title}</title>
         <link rel="stylesheet" type="text/css" href="style.css" />
         </head>
