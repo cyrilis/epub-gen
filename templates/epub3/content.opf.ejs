@@ -10,7 +10,7 @@
     <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"
               xmlns:opf="http://www.idpf.org/2007/opf">
 
-        <dc:identifier id="BookId" >uuid:<%= id %></dc:identifier>
+        <dc:identifier id="BookId" opf:scheme="URN"><%= id %></dc:identifier>
         <meta property="dcterms:identifier" id="meta-identifier">BookId</meta>
         <dc:title><%= title %></dc:title>
         <meta property="dcterms:title" id="meta-title"><%= title %></meta>
