@@ -198,15 +198,16 @@ class EPub
     fs.mkdirSync(@uuid + "/META-INF")
     fs.writeFileSync( "#{@uuid}/META-INF/container.xml", """<?xml version="1.0" encoding="UTF-8" ?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>""")
 
-    # write meta-inf/com.apple.ibooks.display-options.xml [from pedrosanta:xhtml#6]
-    fs.writeFileSync( "#{@uuid}/META-INF/com.apple.ibooks.display-options.xml","""
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <display_options>
-        <platform name="*">
-          <option name="specified-fonts">true</option>
-        </platform>
-      </display_options>
-    """)
+    if self.options.version is 2
+      # write meta-inf/com.apple.ibooks.display-options.xml [from pedrosanta:xhtml#6]
+      fs.writeFileSync "#{@uuid}/META-INF/com.apple.ibooks.display-options.xml", """
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <display_options>
+          <platform name="*">
+            <option name="specified-fonts">true</option>
+          </platform>
+        </display_options>
+      """
 
     opfPath = self.options.customOpfTemplatePath or path.resolve(__dirname, "../templates/epub#{self.options.version}/content.opf.ejs")
     if !fs.existsSync(opfPath)
