@@ -76,7 +76,7 @@ class EPub
       content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
       content.href = "#{index}_#{titleSlug}.xhtml"
       content.id = "item_#{index}"
-      content.dir = path.dirname(content.path)
+      content.dir = path.dirname(content.filePath)
 
       #fix Author Array
       content.author =
