@@ -13,7 +13,7 @@ It's very fast, except the time to download images from the web.
 
 ## Usage
 
-First, make sure you have `zip` installed. then cd to your project dir, run:
+cd to your project dir, run:
 
 	npm install epub-gen
 
