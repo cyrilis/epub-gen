@@ -195,7 +195,7 @@ class EPub
       data = """#{self.options.docHeader}
         <head>
         <meta charset="UTF-8" />
-        <title>#{entities.encodeHTML(content.title)}</title>
+        <title>#{entities.encodeHTML(content.title || '')}</title>
         <link rel="stylesheet" type="text/css" href="style.css" />
         </head>
       <body>
