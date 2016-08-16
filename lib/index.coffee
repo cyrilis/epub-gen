@@ -71,7 +71,6 @@ class EPub
     @options.uuid = @uuid
     @options.id = @id
     @options.images = []
-    isXmlMode = @options.version is 2
     @options.content = _.map @options.content, (content, index)->
       titleSlug = uslug removeDiacritics content.title || "no title"
       content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
@@ -94,7 +93,6 @@ class EPub
       content.data = content.data.replace(/\&/g, "&amp;")
 
       $ = cheerio.load( content.data, {
-        xmlMode: isXmlMode,
         lowerCaseTags: true,
         ignoreWhitespace: true,
         recognizeSelfClosing: true
@@ -102,7 +100,6 @@ class EPub
 
       if $("body").length
         $ = cheerio.load( $("body").html(), {
-          xmlMode: isXmlMode,
           lowerCaseTags: true,
           ignoreWhitespace: true,
           recognizeSelfClosing: true
