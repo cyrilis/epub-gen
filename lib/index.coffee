@@ -10,6 +10,10 @@ request = require "superagent"
 fsextra = require "fs-extra"
 removeDiacritics = require("diacritics").remove
 mime = require "mime"
+archiver = require "archiver"
+
+# provides rm -rf for deleting temp directory across various platforms.
+rimraf = require "rimraf"
 
 uuid = ->
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace /[xy]/g, (c)->
@@ -337,35 +341,29 @@ class EPub
 
   genEpub: ()->
     # Thanks to Paul Bradley
-    # http://www.bradleymedia.org/gzip-markdown-epub/
+    # http://www.bradleymedia.org/gzip-markdown-epub/ (404 as of 28.07.2016)
 
     genDefer = new Q.defer()
 
     self = @
-    filename = "book.epub.zip"
-    initCmd = "zip -q -X -0 #{filename} mimetype"
-    zipCmd  = "zip -q -X -9 -r #{filename} * -x mimetype #{filename}"
-    cleanUp = "mv #{filename} book.epub && rm -f -r META-INF OEBPS mimetype"
-    cleanUp = "mv #{filename} book.epub"
     cwd = @uuid
-    self.runCommand(initCmd, {cwd}).then ()->
-      self.runCommand(zipCmd, {cwd}).then ()->
-        self.runCommand(cleanUp, {cwd}).then ()->
-          stream = fs.createReadStream( path.resolve self.uuid, "book.epub" )
-          stream.pipe fs.createWriteStream self.options.output
-          stream.on "error", (err)->
-            console.error(err)
-            self.defer.reject(err)
-          stream.on "end", ()->
-            self.defer.resolve()
-            currentDir = self.options.tempDir
-            self.runCommand("rm -f -r #{self.id}/", {cwd: currentDir})
-        , (err)->
+
+    archive = archiver("zip", {zlib: {level: 9}})
+    output = fs.createWriteStream self.options.output
+    console.log "Zipping temp dir to", self.options.output
+    archive.file(cwd + "/mimetype", {store:true, name:"mimetype"})
+    archive.directory cwd + "/META-INF", "META-INF"
+    archive.directory cwd + "/OEBPS", "OEBPS"
+    archive.pipe output
+    archive.on "end", ()->
+      console.log "Done zipping, clearing temp dir..."
+      rimraf cwd, (err)->
+        if err
           genDefer.reject(err)
-      , (err)->
-        genDefer.reject(err)
-    , (err)->
-      genDefer.reject(err)
+        else
+          genDefer.resolve()
+    archive.on "error", (err) -> genDefer.reject(err)
+    archive.finalize()
 
     genDefer.promise
 
