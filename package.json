@@ -1,6 +1,6 @@
 {
   "name": "epub-gen",
-  "version": "0.0.15",
+  "version": "0.0.14",
   "description": "A libraty to generate Epub from HTML",
   "main": "index.js",
   "scripts": {
@@ -24,8 +24,8 @@
   },
   "homepage": "https://github.com/cyrilis/epub-gen",
   "dependencies": {
-    "archiver":"^1.0.1",
-    "rimraf:"^2.5.2",
+    "archiver": "^1.0.1",
+    "rimraf": "^2.5.2",
     "cheerio": "^0.18.0",
     "diacritics": "^1.2.1",
     "ejs": "^2.2.4",
