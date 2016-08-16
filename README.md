@@ -13,9 +13,9 @@ It's very fast, except the time to download images from the web.
 
 ## Usage
 
-cd to your project dir, run:
+Install the lib and add it as a dependency (recommended), run on your project dir:
 
-	npm install epub-gen
+	npm install epub-gen --save
 
 Then put this in your code:
 
