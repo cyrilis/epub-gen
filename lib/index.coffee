@@ -353,13 +353,13 @@ class EPub
 
     archive = archiver("zip", {zlib: {level: 9}})
     output = fs.createWriteStream self.options.output
-    console.log "Creating zip from %o to", cwd, self.options.output
+    console.log "Zipping temp dir to", self.options.output
     archive.file(cwd + "/mimetype", {store:true, name:"mimetype"})
     archive.directory cwd + "/META-INF", "META-INF"
     archive.directory cwd + "/OEBPS", "OEBPS"
     archive.pipe output
     archive.on "end", ()->
-      console.log "Done zipping, clearing tmp dir %o", cwd
+      console.log "Done zipping, clearing temp dir..."
       rimraf cwd, (err)->
         if err
           genDefer.reject(err)
