@@ -1,4 +1,3 @@
-exec = require("child_process").exec
 path = require "path"
 fs = require "fs"
 Q = require "q"
@@ -32,11 +31,12 @@ class EPub
     if not @options.output
       console.error(new Error("No Output Path"))
       @defer.reject(new Error("No output path"))
-      return false
+      return
 
     if not options.title or not options.content
-      console.log "options not valid"
-      return false
+      console.error(new Error("Title and content are both required"))
+      @defer.reject(new Error("Title and content are both required"))
+      return
 
     @options = _.extend {
       description: options.title
@@ -144,7 +144,6 @@ class EPub
 
     @render()
     @promise = @defer.promise
-    @
 
   render: ()->
     self = @
@@ -175,7 +174,7 @@ class EPub
       fs.mkdirSync(@options.tempDir)
     fs.mkdirSync @uuid
     fs.mkdirSync path.resolve(@uuid, "./OEBPS")
-    @options.css ||= ".epub-author{color: #555;}.epub-link{margin-bottom: 30px;}.epub-link a{color: #666;font-size: 90%;}.toc-author{font-size: 90%;color: #555;}.toc-link{color: #999;font-size: 85%;display: block;}hr{border: 0;border-bottom: 1px solid #dedede;margin: 60px 10%;}"
+    @options.css ||= fs.readFileSync(path.resolve(__dirname, "../templates/template.css"))
     fs.writeFileSync path.resolve(@uuid, "./OEBPS/style.css"), @options.css
     if self.options.fonts.length
       fs.mkdirSync(path.resolve @uuid, "./OEBPS/fonts")
@@ -267,8 +266,7 @@ class EPub
         console.log "[Success] cover image downloaded successfully!"
         coverDefer.resolve()
       writeStream.on "error", (err)->
-        console.log "Error", err
-        console.log arguments
+        console.error "Error", err
         coverDefer.reject(err)
     else
       coverDefer.resolve()
@@ -320,25 +318,13 @@ class EPub
         imgDefer.resolve()
     imgDefer.promise
 
-
-  runCommand: (cmd, option)->
-    defer = new Q.defer()
-    exec cmd, option, (err, stderr, stdout)->
-      if err
-        console.error(cmd, stderr, stdout)
-        defer.reject(err)
-        return false
-      if stderr
-        console.warn stderr
-      if stdout and option.quite
-        console.log stdout
-      defer.resolve stdout
-    defer.promise
-
-
   genEpub: ()->
     # Thanks to Paul Bradley
     # http://www.bradleymedia.org/gzip-markdown-epub/ (404 as of 28.07.2016)
+    # Web Archive URL:
+    # http://web.archive.org/web/20150521053611/http://www.bradleymedia.org/gzip-markdown-epub
+    # or Gist:
+    # https://gist.github.com/cyrilis/8d48eef37fbc108869ac32eb3ef97bca
 
     genDefer = new Q.defer()
 
