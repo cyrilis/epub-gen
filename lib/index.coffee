@@ -76,11 +76,23 @@ class EPub
     @options.id = @id
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
-      titleSlug = uslug removeDiacritics content.title || "no title"
-      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
-      content.href = "#{index}_#{titleSlug}.xhtml"
+
+      if !content.filename
+        titleSlug = uslug removeDiacritics content.title || "no title"
+        content.href = "#{index}_#{titleSlug}.xhtml"
+        content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
+      else
+        content.href = if content.filename.match(/\.xhtml$/) then content.filename else "#{content.filename}.xhtml"
+        console.log(content.href)
+        if content.filename.match(/\.xhtml$/)
+          content.filePath = path.resolve self.uuid, "./OEBPS/#{content.filename}"
+        else
+          content.filePath = path.resolve self.uuid, "./OEBPS/#{content.filename}.xhtml"
+
       content.id = "item_#{index}"
       content.dir = path.dirname(content.filePath)
+      content.excludeFromToc ||= false
+      content.beforeToc ||= false
 
       #fix Author Array
       content.author =

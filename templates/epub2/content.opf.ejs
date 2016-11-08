@@ -41,9 +41,16 @@
     </manifest>
 
     <spine toc="ncx">
+        <% content.forEach(function(content, index){ %>
+            <% if(content.beforeToc && !content.excludeFromToc){ %>
+                <itemref idref="content_<%= index %>_<%= content.id %>"/>
+            <% } %>
+        <% }) %>
         <itemref idref="toc" />
         <% content.forEach(function(content, index){ %>
-        <itemref idref="content_<%= index %>_<%= content.id %>" />
+            <% if(!content.beforeToc && !content.excludeFromToc){ %>
+                <itemref idref="content_<%= index %>_<%= content.id %>"/>
+            <% } %>
         <% }) %>
     </spine>
     <guide />

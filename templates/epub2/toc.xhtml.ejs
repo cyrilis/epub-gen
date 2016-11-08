@@ -9,13 +9,16 @@
 <body>
 <h1 class="h1"><%= tocTitle %></h1>
 <% content.forEach(function(content, index){ %>
-<p class="table-of-content">
-    <a href="<%= content.href %>"><%= (1+index) + ". " + (content.title || "Chapter "+ (1+index)) %>
-        <% if(content.author.length){ %>
-        - <small class="toc-author"><%= content.author.join(",") %></small>
-        <% } %>
-        <% if(content.url){ %><span class="toc-link"><%= content.url %></span><% }else{ %><span class="toc-link"></span><% } %>
-    </a>
-</p><% }) %>
+    <% if(!content.excludeFromToc){ %>
+        <p class="table-of-content">
+            <a href="<%= content.href %>"><%= (1+index) + ". " + (content.title || "Chapter "+ (1+index)) %>
+                <% if(content.author.length){ %>
+                - <small class="toc-author"><%= content.author.join(",") %></small>
+                <% } %>
+                <% if(content.url){ %><span class="toc-link"><%= content.url %></span><% }else{ %><span class="toc-link"></span><% } %>
+            </a>
+        </p>
+    <% } %>
+<% }) %>
 </body>
 </html>
