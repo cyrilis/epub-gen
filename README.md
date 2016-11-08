@@ -76,8 +76,13 @@ Then put this in your code:
     - `author`:
         optional, if each book author is different, you can fill it.
     - `data`:
-        HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded. With the upgrade is possible to use local images (for this the path 	must start with file: //)
-
+        required, HTML String of the chapter content. image paths should be absolute path (should start with "http" or "https"), so that they could be downloaded. With the upgrade is possible to use local images (for this the path 	must start with file: //)
+    - `excludeFromToc`:
+        optional, if is not shown on Table of content, default: false;
+    - `beforeToc`:
+        optional, if is shown before Table of content, such like copyright pages. default: false;
+    - `filename`:
+        optional, specify filename for each chapter, default: undefined;
 
 #### Output
 If you don't want pass the output pass the output path as the second argument, you should specify output path as `option.output`.
