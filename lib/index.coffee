@@ -197,7 +197,6 @@ class EPub
         filename = path.basename(font)
         fsextra.copySync(font, path.resolve self.uuid, "./OEBPS/fonts/" + filename)
         filename
-    fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
     _.each @options.content, (content)->
       data = """#{self.options.docHeader}
         <head>
@@ -322,6 +321,7 @@ class EPub
     if not self.options.images.length
       imgDefer.resolve()
     else
+      fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
       deferArray = []
       _.each self.options.images, (image)->
         deferArray.push self.downloadImage(image)
