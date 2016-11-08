@@ -1,4 +1,3 @@
-exec = require("child_process").exec
 path = require "path"
 fs = require "fs"
 Q = require "q"
@@ -33,11 +32,12 @@ class EPub
     if not @options.output
       console.error(new Error("No Output Path"))
       @defer.reject(new Error("No output path"))
-      return false
+      return
 
     if not options.title or not options.content
-      console.log "options not valid"
-      return false
+      console.error(new Error("Title and content are both required"))
+      @defer.reject(new Error("Title and content are both required"))
+      return
 
     @options = _.extend {
       description: options.title
@@ -77,11 +77,23 @@ class EPub
     @options.id = @id
     @options.images = []
     @options.content = _.map @options.content, (content, index)->
-      titleSlug = uslug removeDiacritics content.title || "no title"
-      content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
-      content.href = "#{index}_#{titleSlug}.xhtml"
+
+      if !content.filename
+        titleSlug = uslug removeDiacritics content.title || "no title"
+        content.href = "#{index}_#{titleSlug}.xhtml"
+        content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
+      else
+        content.href = if content.filename.match(/\.xhtml$/) then content.filename else "#{content.filename}.xhtml"
+        console.log(content.href)
+        if content.filename.match(/\.xhtml$/)
+          content.filePath = path.resolve self.uuid, "./OEBPS/#{content.filename}"
+        else
+          content.filePath = path.resolve self.uuid, "./OEBPS/#{content.filename}.xhtml"
+
       content.id = "item_#{index}"
       content.dir = path.dirname(content.filePath)
+      content.excludeFromToc ||= false
+      content.beforeToc ||= false
 
       #fix Author Array
       content.author =
@@ -89,13 +101,9 @@ class EPub
         else if not content.author or not _.isArray content.author then []
         else content.author
 
-      # Only body innerHTML is allowed
-      #reg = /<body[^>]*>((.|[\n\r])*)<\/body>/
-      #content.data = content.data.match(reg)?[1] || content.data
-      ## replace with cheerio
-      allowedAttributes = ["content", "alt", "id", "title", "src", "href", "about", "accesskey", "aria-activedescendant", "aria-atomic", "aria-autocomplete", "aria-busy", "aria-checked", "aria-controls", "aria-describedat", "aria-describedby", "aria-disabled", "aria-dropeffect", "aria-expanded", "aria-flowto", "aria-grabbed", "aria-haspopup", "aria-hidden", "aria-invalid", "aria-label", "aria-labelledby", "aria-level", "aria-live", "aria-multiline", "aria-multiselectable", "aria-orientation", "aria-owns", "aria-posinset", "aria-pressed", "aria-readonly", "aria-relevant", "aria-required", "aria-selected", "aria-setsize", "aria-sort", "aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-valuetext", "class", "content", "contenteditable", "contextmenu", "datatype", "dir", "draggable", "dropzone", "hidden", "hreflang", "id", "inlist", "itemid", "itemref", "itemscope", "itemtype", "lang", "media", "ns1:type", "ns2:alphabet", "ns2:ph", "onabort", "onblur", "oncanplay", "oncanplaythrough", "onchange", "onclick", "oncontextmenu", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave", "ondragover", "ondragstart", "ondrop", "ondurationchange", "onemptied", "onended", "onerror", "onfocus", "oninput", "oninvalid", "onkeydown", "onkeypress", "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onmousewheel", "onpause", "onplay", "onplaying", "onprogress", "onratechange", "onreadystatechange", "onreset", "onscroll", "onseeked", "onseeking", "onselect", "onshow", "onstalled", "onsubmit", "onsuspend", "ontimeupdate", "onvolumechange", "onwaiting", "prefix", "property", "rel", "resource", "rev", "role", "spellcheck", "style", "tabindex", "target", "title", "type", "typeof", "vocab", "xml:base", "xml:lang", "xml:space"]
+      allowedAttributes = ["content", "alt" ,"id","title", "src", "href", "about", "accesskey", "aria-activedescendant", "aria-atomic", "aria-autocomplete", "aria-busy", "aria-checked", "aria-controls", "aria-describedat", "aria-describedby", "aria-disabled", "aria-dropeffect", "aria-expanded", "aria-flowto", "aria-grabbed", "aria-haspopup", "aria-hidden", "aria-invalid", "aria-label", "aria-labelledby", "aria-level", "aria-live", "aria-multiline", "aria-multiselectable", "aria-orientation", "aria-owns", "aria-posinset", "aria-pressed", "aria-readonly", "aria-relevant", "aria-required", "aria-selected", "aria-setsize", "aria-sort", "aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-valuetext", "class", "content", "contenteditable", "contextmenu", "datatype", "dir", "draggable", "dropzone", "hidden", "hreflang", "id", "inlist", "itemid", "itemref", "itemscope", "itemtype", "lang", "media", "ns1:type", "ns2:alphabet", "ns2:ph", "onabort", "onblur", "oncanplay", "oncanplaythrough", "onchange", "onclick", "oncontextmenu", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave", "ondragover", "ondragstart", "ondrop", "ondurationchange", "onemptied", "onended", "onerror", "onfocus", "oninput", "oninvalid", "onkeydown", "onkeypress", "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onmousewheel", "onpause", "onplay", "onplaying", "onprogress", "onratechange", "onreadystatechange", "onreset", "onscroll", "onseeked", "onseeking", "onselect", "onshow", "onstalled", "onsubmit", "onsuspend", "ontimeupdate", "onvolumechange", "onwaiting", "prefix", "property", "rel", "resource", "rev", "role", "spellcheck", "style", "tabindex", "target", "title", "type", "typeof", "vocab", "xml:base", "xml:lang", "xml:space", "colspan", "rowspan"]
       allowedXhtml11Tags = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "dl", "dt", "dd", "address", "hr", "pre", "blockquote", "center", "ins", "del", "a", "span", "bdo", "br", "em", "strong", "dfn", "code", "samp", "kbd", "bar", "cite", "abbr", "acronym", "q", "sub", "sup", "tt", "i", "b", "big", "small", "u", "s", "strike", "basefont", "font", "object", "param", "img", "table", "caption", "colgroup", "col", "thead", "tfoot", "tbody", "tr", "th", "td", "embed", "applet", "iframe", "img", "map", "noscript", "ns:svg", "object", "script", "table", "tt", "var"]
-      content.data = content.data.replace(/\&/g, "&amp;")
+      content.data = entities.encodeXML(content.data)
 
       $ = cheerio.load( content.data, {
         lowerCaseTags: true,
@@ -103,6 +111,7 @@ class EPub
         recognizeSelfClosing: true
       })
 
+      # Only body innerHTML is allowed
       if $("body").length
         $ = cheerio.load( $("body").html(), {
           lowerCaseTags: true,
@@ -148,7 +157,6 @@ class EPub
 
     @render()
     @promise = @defer.promise
-    @
 
   render: ()->
     self = @
@@ -179,7 +187,7 @@ class EPub
       fs.mkdirSync(@options.tempDir)
     fs.mkdirSync @uuid
     fs.mkdirSync path.resolve(@uuid, "./OEBPS")
-    @options.css ||= ".epub-author{color: #555;}.epub-link{margin-bottom: 30px;}.epub-link a{color: #666;font-size: 90%;}.toc-author{font-size: 90%;color: #555;}.toc-link{color: #999;font-size: 85%;display: block;}hr{border: 0;border-bottom: 1px solid #dedede;margin: 60px 10%;}"
+    @options.css ||= fs.readFileSync(path.resolve(__dirname, "../templates/template.css"))
     fs.writeFileSync path.resolve(@uuid, "./OEBPS/style.css"), @options.css
     if self.options.fonts.length
       fs.mkdirSync(path.resolve @uuid, "./OEBPS/fonts")
@@ -190,7 +198,6 @@ class EPub
         filename = path.basename(font)
         fsextra.copySync(font, path.resolve self.uuid, "./OEBPS/fonts/" + filename)
         filename
-    fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
     _.each @options.content, (content)->
       data = """#{self.options.docHeader}
         <head>
@@ -271,8 +278,7 @@ class EPub
         console.log "[Success] cover image downloaded successfully!"
         coverDefer.resolve()
       writeStream.on "error", (err)->
-        console.log "Error", err
-        console.log arguments
+        console.error "Error", err
         coverDefer.reject(err)
     else
       coverDefer.resolve()
@@ -316,6 +322,7 @@ class EPub
     if not self.options.images.length
       imgDefer.resolve()
     else
+      fs.mkdirSync(path.resolve @uuid, "./OEBPS/images")
       deferArray = []
       _.each self.options.images, (image)->
         deferArray.push self.downloadImage(image)
@@ -324,25 +331,13 @@ class EPub
         imgDefer.resolve()
     imgDefer.promise
 
-
-  runCommand: (cmd, option)->
-    defer = new Q.defer()
-    exec cmd, option, (err, stderr, stdout)->
-      if err
-        console.error(cmd, stderr, stdout)
-        defer.reject(err)
-        return false
-      if stderr
-        console.warn stderr
-      if stdout and option.quite
-        console.log stdout
-      defer.resolve stdout
-    defer.promise
-
-
   genEpub: ()->
     # Thanks to Paul Bradley
     # http://www.bradleymedia.org/gzip-markdown-epub/ (404 as of 28.07.2016)
+    # Web Archive URL:
+    # http://web.archive.org/web/20150521053611/http://www.bradleymedia.org/gzip-markdown-epub
+    # or Gist:
+    # https://gist.github.com/cyrilis/8d48eef37fbc108869ac32eb3ef97bca
 
     genDefer = new Q.defer()
 
