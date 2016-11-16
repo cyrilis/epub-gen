@@ -120,7 +120,6 @@ class EPub
         attrs = elem.attribs
         that = @
         if that.name in ["img", "br", "hr"]
-          $(that).text("")
           if that.name is "img"
             $(that).attr("alt", $(that).attr("alt") or "image-placeholder")
 
