@@ -84,7 +84,6 @@ class EPub
         content.filePath = path.resolve self.uuid, "./OEBPS/#{index}_#{titleSlug}.xhtml"
       else
         content.href = if content.filename.match(/\.xhtml$/) then content.filename else "#{content.filename}.xhtml"
-        console.log(content.href)
         if content.filename.match(/\.xhtml$/)
           content.filePath = path.resolve self.uuid, "./OEBPS/#{content.filename}"
         else
