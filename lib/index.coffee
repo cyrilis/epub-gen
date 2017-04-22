@@ -62,7 +62,7 @@ class EPub
     else
       @options.docHeader = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="#{self.options.lang}">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="#{self.options.lang}">
 """
 
     if _.isString @options.author
