@@ -66,6 +66,8 @@ Then put this in your code:
     Optional. For advanced customizations: absolute path to a NCX toc template.
 - `customHtmlTocTemplatePath`:
     Optional. For advanced customizations: absolute path to a HTML toc template.
+- `includeDTDEvenInVersion3`:
+		Optional. Include XHTML 1.1 DTD in DOCTYPE even when the ePub version is 3. 
 - `content`:
     Book Chapters content. It's should be an array of objects. eg. `[{title: "Chapter 1",data: "<div>..."}, {data: ""},...]`
 

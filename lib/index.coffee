@@ -51,10 +51,11 @@ class EPub
       customOpfTemplatePath: null
       customNcxTocTemplatePath: null
       customHtmlTocTemplatePath: null
+      includeDTDEvenInVersion3: true
       version: 3
     }, options
 
-    if @options.version is 2
+    if @options.version is 2 or (@options.version is 3 and @options.includeDTDEvenInVersion3 is true)
       @options.docHeader = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="#{self.options.lang}">
