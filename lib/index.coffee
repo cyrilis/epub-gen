@@ -212,9 +212,6 @@ class EPub
       data += "#{content.data}</body></html>"
       fs.writeFileSync(content.filePath, data)
 
-    # write mimetype file
-    fs.writeFileSync(@uuid + "/mimetype", "application/epub+zip")
-
     # write meta-inf/container.xml
     fs.mkdirSync(@uuid + "/META-INF")
     fs.writeFileSync( "#{@uuid}/META-INF/container.xml", """<?xml version="1.0" encoding="UTF-8" ?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>""")
@@ -346,7 +343,7 @@ class EPub
     archive = archiver("zip", {zlib: {level: 9}})
     output = fs.createWriteStream self.options.output
     console.log "Zipping temp dir to", self.options.output
-    archive.file(cwd + "/mimetype", {store:true, name:"mimetype"})
+    archive.append("application/epub+zip", {store:true, name:"mimetype"})
     archive.directory cwd + "/META-INF", "META-INF"
     archive.directory cwd + "/OEBPS", "OEBPS"
     archive.pipe output
