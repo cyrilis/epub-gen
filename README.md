@@ -58,6 +58,8 @@ Then put this in your code:
     ```
 - `lang`:
     Language of the book in 2 letters code (optional). If not specified, will fallback to `en`.
+- `tocTitle`:
+    Title of the table of contents. If not specified, will fallback to `Table Of Contents`.
 - `appendChapterTitles`:
     Automatically append the chapter title at the beginning of each contents. You can disable that by specifying `false`.
 - `customOpfTemplatePath`:
