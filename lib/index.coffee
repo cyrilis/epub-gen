@@ -102,11 +102,9 @@ class EPub
 
       allowedAttributes = ["content", "alt" ,"id","title", "src", "href", "about", "accesskey", "aria-activedescendant", "aria-atomic", "aria-autocomplete", "aria-busy", "aria-checked", "aria-controls", "aria-describedat", "aria-describedby", "aria-disabled", "aria-dropeffect", "aria-expanded", "aria-flowto", "aria-grabbed", "aria-haspopup", "aria-hidden", "aria-invalid", "aria-label", "aria-labelledby", "aria-level", "aria-live", "aria-multiline", "aria-multiselectable", "aria-orientation", "aria-owns", "aria-posinset", "aria-pressed", "aria-readonly", "aria-relevant", "aria-required", "aria-selected", "aria-setsize", "aria-sort", "aria-valuemax", "aria-valuemin", "aria-valuenow", "aria-valuetext", "class", "content", "contenteditable", "contextmenu", "datatype", "dir", "draggable", "dropzone", "hidden", "hreflang", "id", "inlist", "itemid", "itemref", "itemscope", "itemtype", "lang", "media", "ns1:type", "ns2:alphabet", "ns2:ph", "onabort", "onblur", "oncanplay", "oncanplaythrough", "onchange", "onclick", "oncontextmenu", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave", "ondragover", "ondragstart", "ondrop", "ondurationchange", "onemptied", "onended", "onerror", "onfocus", "oninput", "oninvalid", "onkeydown", "onkeypress", "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onmousewheel", "onpause", "onplay", "onplaying", "onprogress", "onratechange", "onreadystatechange", "onreset", "onscroll", "onseeked", "onseeking", "onselect", "onshow", "onstalled", "onsubmit", "onsuspend", "ontimeupdate", "onvolumechange", "onwaiting", "prefix", "property", "rel", "resource", "rev", "role", "spellcheck", "style", "tabindex", "target", "title", "type", "typeof", "vocab", "xml:base", "xml:lang", "xml:space", "colspan", "rowspan"]
       allowedXhtml11Tags = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "dl", "dt", "dd", "address", "hr", "pre", "blockquote", "center", "ins", "del", "a", "span", "bdo", "br", "em", "strong", "dfn", "code", "samp", "kbd", "bar", "cite", "abbr", "acronym", "q", "sub", "sup", "tt", "i", "b", "big", "small", "u", "s", "strike", "basefont", "font", "object", "param", "img", "table", "caption", "colgroup", "col", "thead", "tfoot", "tbody", "tr", "th", "td", "embed", "applet", "iframe", "img", "map", "noscript", "ns:svg", "object", "script", "table", "tt", "var"]
-      content.data = entities.encodeXML(content.data)
 
       $ = cheerio.load( content.data, {
         lowerCaseTags: true,
-        ignoreWhitespace: true,
         recognizeSelfClosing: true
       })
 
@@ -114,14 +112,12 @@ class EPub
       if $("body").length
         $ = cheerio.load( $("body").html(), {
           lowerCaseTags: true,
-          ignoreWhitespace: true,
           recognizeSelfClosing: true
         })
       $($("*").get().reverse()).each (elemIndex, elem)->
         attrs = elem.attribs
         that = @
         if that.name in ["img", "br", "hr"]
-          $(that).text("")
           if that.name is "img"
             $(that).attr("alt", $(that).attr("alt") or "image-placeholder")
 
@@ -141,12 +137,16 @@ class EPub
 
       $("img").each (index, elem)->
         url = $(elem).attr("src")
-        id = uuid()
-        mediaType = mime.lookup url
-        extension = mime.extension mediaType
+        if image = self.options.images.find((element) -> element.url == url)
+          id = image.id
+          extension = image.extension
+        else
+          id = uuid()
+          mediaType = mime.lookup url
+          extension = mime.extension mediaType
+          dir = content.dir
+          self.options.images.push {id, url, dir, mediaType, extension}
         $(elem).attr("src", "images/#{id}.#{extension}")
-        dir = content.dir
-        self.options.images.push {id, url, dir, mediaType, extension}
       content.data = $.xml()
       content
 
@@ -209,7 +209,7 @@ class EPub
       data += if content.title and self.options.appendChapterTitles then "<h1>#{entities.encodeXML(content.title)}</h1>" else ""
       data += if content.title and content.author and content.author.length then "<p class='epub-author'>#{entities.encodeXML(content.author.join(", "))}</p>" else ""
       data += if content.title and content.url then "<p class='epub-link'><a href='#{content.url}'>#{content.url}</a></p>" else ""
-      data += "#{content.rawData || content.data}</body></html>"
+      data += "#{content.data}</body></html>"
       fs.writeFileSync(content.filePath, data)
 
     # write meta-inf/container.xml

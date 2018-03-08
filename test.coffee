@@ -57,5 +57,5 @@ optionsAlice = {
   ]
 }
 
-new EPub(optionsHtmlPaste, path.resolve(__dirname, "./tempDir/book.epub")).promise.then ()->
+new EPub(optionsAlice, path.resolve(__dirname, "./tempDir/book.epub")).promise.then ()->
   console.log "#{options.title} is generated successfully"
