@@ -139,12 +139,16 @@ class EPub
 
       $("img").each (index, elem)->
         url = $(elem).attr("src")
-        id = uuid()
-        mediaType = mime.lookup url
-        extension = mime.extension mediaType
+        if image = self.options.images.find((element) -> element.url == url)
+          id = image.id
+          extension = image.extension
+        else
+          id = uuid()
+          mediaType = mime.lookup url
+          extension = mime.extension mediaType
+          dir = content.dir
+          self.options.images.push {id, url, dir, mediaType, extension}
         $(elem).attr("src", "images/#{id}.#{extension}")
-        dir = content.dir
-        self.options.images.push {id, url, dir, mediaType, extension}
       content.data = $.xml()
       content
 
