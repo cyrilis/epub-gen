@@ -142,8 +142,8 @@ class EPub
           extension = image.extension
         else
           id = uuid()
-          mediaType = mime.lookup url.replace /\?.*/, ""
-          extension = mime.extension mediaType
+          mediaType = mime.getType url.replace /\?.*/, ""
+          extension = mime.getExtension mediaType
           dir = content.dir
           self.options.images.push {id, url, dir, mediaType, extension}
         $(elem).attr("src", "images/#{id}.#{extension}")
@@ -151,8 +151,8 @@ class EPub
       content
 
     if @options.cover
-      @options._coverMediaType = mime.lookup @options.cover
-      @options._coverExtension = mime.extension @options._coverMediaType
+      @options._coverMediaType = mime.getType @options.cover
+      @options._coverExtension = mime.getExtension @options._coverMediaType
 
     @render()
     @promise = @defer.promise
@@ -195,7 +195,7 @@ class EPub
           generateDefer.reject(new Error('Custom font not found at ' + font + '.'))
           return generateDefer.promise
         filename = path.basename(font)
-        fsextra.copySync(font, path.resolve self.uuid, "./OEBPS/fonts/" + filename)
+        fsextra.copySync(font, path.resolve(self.uuid, "./OEBPS/fonts/" + filename))
         filename
     _.each @options.content, (content)->
       data = """#{self.options.docHeader}
@@ -291,7 +291,7 @@ class EPub
     filename = path.resolve self.uuid, ("./OEBPS/images/" + options.id + "." + options.extension)
     if options.url.indexOf("file://") == 0
       auxpath = options.url.substr(7)
-      fsextra.copySync(auxpath,filename)
+      fsextra.copySync(auxpath, filename)
       return downloadImageDefer.resolve(options)
     else
       if options.url.indexOf("http") is 0
