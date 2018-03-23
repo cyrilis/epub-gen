@@ -142,7 +142,7 @@ class EPub
           extension = image.extension
         else
           id = uuid()
-          mediaType = mime.lookup url
+          mediaType = mime.lookup url.replace /\?.*/, ""
           extension = mime.extension mediaType
           dir = content.dir
           self.options.images.push {id, url, dir, mediaType, extension}
