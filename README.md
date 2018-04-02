@@ -45,6 +45,8 @@ Then put this in your code:
     You can specify the version of the generated EPUB, `3` the latest version (http://idpf.org/epub/30) or `2` the previous version (http://idpf.org/epub/201, for better compatibility with older readers). If not specified, will fallback to `3`.
 - `css`:
     If you really hate our css, you can pass css string to replace our default style. eg: `"body{background: #000}"`
+-`js`:
+    This property can be used to supply custom Javascript code as a string. eg: `console.log('I support JS!')`
 - `fonts`:
     Array of (absolute) paths to custom fonts to include on the book so they can be used on custom css. Ex: if you configure the array to `fonts: ['/path/to/Merriweather.ttf']` you can use the following on the custom CSS:
 

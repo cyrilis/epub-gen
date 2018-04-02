@@ -1,0 +1,1 @@
+console.log( 'This EPUB supports Javascript' )
