@@ -136,17 +136,19 @@ class EPub
             $(that).replaceWith($("<div>" + child + "</div>"))
 
       $("img").each (index, elem)->
-        url = $(elem).attr("src")
-        if image = self.options.images.find((element) -> element.url == url)
-          id = image.id
-          extension = image.extension
+        if url = $(elem).attr("src")
+          if image = self.options.images.find((element) -> element.url == url)
+            id = image.id
+            extension = image.extension
+          else
+            id = uuid()
+            mediaType = mime.getType url.replace /\?.*/, ""
+            extension = mime.getExtension mediaType
+            dir = content.dir
+            self.options.images.push {id, url, dir, mediaType, extension}
+          $(elem).attr("src", "images/#{id}.#{extension}")
         else
-          id = uuid()
-          mediaType = mime.getType url.replace /\?.*/, ""
-          extension = mime.getExtension mediaType
-          dir = content.dir
-          self.options.images.push {id, url, dir, mediaType, extension}
-        $(elem).attr("src", "images/#{id}.#{extension}")
+          $(elem).remove()
       content.data = $.xml()
       content
 
