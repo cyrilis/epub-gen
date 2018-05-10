@@ -4,7 +4,8 @@
   "description": "A library to generate EPUB from HTML",
   "main": "index.js",
   "scripts": {
-    "test": "node test"
+    "test": "node test",
+    "compile": "coffee -c ."
   },
   "repository": {
     "type": "git",
@@ -36,5 +37,8 @@
     "superagent": "^3.8.2",
     "underscore": "^1.8.3",
     "uslug": "^1.0.4"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.3.0"
   }
 }
