@@ -38,6 +38,9 @@
         <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
         <item id="toc" href="toc.xhtml" media-type="application/xhtml+xml" properties="nav"/>
         <item id="css" href="style.css" media-type="text/css" />
+        <% if(locals.js) { %>
+        <item id="js" href="script.js" media-type="text/javascript" />
+        <% } %>
 
         <% if(locals.cover) { %>
         <item id="image_cover" href="cover.<%= _coverExtension %>" media-type="<%= _coverMediaType %>" />
