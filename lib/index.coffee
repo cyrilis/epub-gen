@@ -159,17 +159,17 @@ class EPub
 
   render: ()->
     self = @
-    console.log("Generating Template Files.....")
+    if self.options.verbose then console.log("Generating Template Files.....")
     @generateTempFile().then ()->
-      console.log("Downloading Images...")
+      if self.options.verbose then console.log("Downloading Images...")
       self.downloadAllImage().fin ()->
-        console.log("Making Cover...")
+        if self.options.verbose then console.log("Making Cover...")
         self.makeCover().then ()->
-          console.log("Generating Epub Files...")
+          if self.options.verbose then console.log("Generating Epub Files...")
           self.genEpub().then (result)->
-            console.log("About to finish...")
+            if self.options.verbose then console.log("About to finish...")
             self.defer.resolve(result)
-            console.log("Done.")
+            if self.options.verbose then console.log("Done.")
           , (err)->
             self.defer.reject(err)
         , (err)->
