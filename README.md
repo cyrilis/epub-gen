@@ -85,6 +85,8 @@ Then put this in your code:
         optional, if is shown before Table of content, such like copyright pages. default: false;
     - `filename`:
         optional, specify filename for each chapter, default: undefined;
+    - `verbose`:
+        specify whether or not to console.log progress messages, default: false.
 
 #### Output
 If you don't want pass the output pass the output path as the second argument, you should specify output path as `option.output`.
