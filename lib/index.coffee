@@ -188,6 +188,8 @@ class EPub
     fs.mkdirSync path.resolve(@uuid, "./OEBPS")
     @options.css ||= fs.readFileSync(path.resolve(__dirname, "../templates/template.css"))
     fs.writeFileSync path.resolve(@uuid, "./OEBPS/style.css"), @options.css
+    if @options.js
+      fs.writeFileSync path.resolve(@uuid, "./OEBPS/script.js"), @options.js
     if self.options.fonts.length
       fs.mkdirSync(path.resolve @uuid, "./OEBPS/fonts")
       @options.fonts = _.map @options.fonts, (font)->
@@ -198,11 +200,13 @@ class EPub
         fsextra.copySync(font, path.resolve(self.uuid, "./OEBPS/fonts/" + filename))
         filename
     _.each @options.content, (content)->
+      script = if self.options.js then """<script src='script.js'></script>""" else ''
       data = """#{self.options.docHeader}
         <head>
         <meta charset="UTF-8" />
         <title>#{entities.encodeXML(content.title || '')}</title>
         <link rel="stylesheet" type="text/css" href="style.css" />
+        #{script}
         </head>
       <body>
       """
