@@ -20,13 +20,12 @@ Install the lib and add it as a dependency (recommended), run on your project di
 Then put this in your code:
 
 ```javascript
-    var Epub = require("epub-gen")
+    const Epub = require("epub-gen");
 
-    new Epub(option [, output]).promise.then(function(){
-        console.log("Ebook Generated Successfully!")
-   	}, function(err){
-        console.error("Failed to generate Ebook because of ", err)
-    })
+    new Epub(option [, output]).promise.then(
+        () => console.log("Ebook Generated Successfully!"),
+	err => console.error("Failed to generate Ebook because of ", err)
+    );
 ```
 
 #### Options
@@ -96,9 +95,9 @@ If you don't want pass the output pass the output path as the second argument, y
 ## Demo Code:
 
 ```javascript
-    var Epub = require("epub-gen")
+    const Epub = require("epub-gen")
 
-    var option = {
+    const option = {
         title: "Alice's Adventures in Wonderland", // *Required, title of the book.
         author: "Lewis Carroll", // *Required, name of the author.
         publisher: "Macmillan & Co.", // optional
