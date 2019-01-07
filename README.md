@@ -84,8 +84,8 @@ Then put this in your code:
         optional, if is shown before Table of content, such like copyright pages. default: false;
     - `filename`:
         optional, specify filename for each chapter, default: undefined;
-    - `verbose`:
-        specify whether or not to console.log progress messages, default: false.
+- `verbose`:
+    specify whether or not to console.log progress messages, default: false.
 
 #### Output
 If you don't want pass the output pass the output path as the second argument, you should specify output path as `option.output`.
@@ -95,7 +95,7 @@ If you don't want pass the output pass the output path as the second argument, y
 ## Demo Code:
 
 ```javascript
-    const Epub = require("epub-gen")
+    const Epub = require("epub-gen");
 
     const option = {
         title: "Alice's Adventures in Wonderland", // *Required, title of the book.
