@@ -1,6 +1,6 @@
 {
   "name": "epub-gen",
-  "version": "0.0.20",
+  "version": "0.1.0",
   "description": "A library to generate EPUB from HTML",
   "main": "index.js",
   "scripts": {
