@@ -7,6 +7,7 @@ ejs = require "ejs"
 cheerio = require "cheerio"
 entities = require "entities"
 request = require "superagent"
+(require "superagent-retry") request
 fsextra = require "fs-extra"
 removeDiacritics = require("diacritics").remove
 mime = require "mime"
@@ -70,7 +71,7 @@ class EPub
     if _.isEmpty @options.author
       @options.author = ["anonymous"]
     if not @options.tempDir
-      @options.tempDir = path.resolve __dirname, "../tempDir/"
+      @options.tempDir = path.resolve "./tempDir/"
     @id = uuid()
     @uuid = path.resolve @options.tempDir, @id
     @options.uuid = @uuid
@@ -264,7 +265,13 @@ class EPub
       destPath = path.resolve @uuid, ("./OEBPS/cover." + @options._coverExtension)
       writeStream = null
       if @options.cover.slice(0,4) is "http"
-        writeStream = request.get(@options.cover).set 'User-Agent': userAgent
+        writeStream = request.get(@options.cover)
+                      .timeout {
+                        response: 10e3, #Wait 10 seconds for the server to start sending
+                        deadline: 3 * 60e3, #allow 3 minute for the image to finish loading
+                      }
+                      .retry 2 # retry 2 times before responding
+                      .set 'User-Agent': userAgent
         writeStream.pipe(fs.createWriteStream(destPath))
       else
         writeStream = fs.createReadStream(@options.cover)
@@ -295,7 +302,13 @@ class EPub
       return downloadImageDefer.resolve(options)
     else
       if options.url.indexOf("http") is 0
-        requestAction = request.get(options.url).set 'User-Agent': userAgent
+        requestAction = request.get(options.url)
+                        .timeout {
+                          response: 10000, #Wait 10 seconds for the server to start sending
+                          deadline: 3 * 60e3, #allow 3 minute for the image to finish loading
+                        }
+                        .retry 2 # retry 2 times before responding
+                        .set 'User-Agent': userAgent
         requestAction.pipe(fs.createWriteStream(filename))
       else
         requestAction = fs.createReadStream(path.resolve(options.dir, options.url))
