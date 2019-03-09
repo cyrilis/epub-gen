@@ -1,5 +1,6 @@
 path = require "path"
 fs = require "fs"
+os = require "os"
 Q = require "q"
 _ = require "underscore"
 uslug = require "uslug"
@@ -12,6 +13,7 @@ fsextra = require "fs-extra"
 removeDiacritics = require("diacritics").remove
 mime = require "mime"
 archiver = require "archiver"
+mkdirp = require "mkdirp"
 
 # provides rm -rf for deleting temp directory across various platforms.
 rimraf = require "rimraf"
@@ -29,8 +31,8 @@ class EPub
 
     if output
       @options.output = output
-
-    if not @options.output
+      mkdirp path.dirname output
+    else
       console.error(new Error("No Output Path"))
       @defer.reject(new Error("No output path"))
       return
@@ -52,7 +54,13 @@ class EPub
       customOpfTemplatePath: null
       customNcxTocTemplatePath: null
       customHtmlTocTemplatePath: null
-      version: 3
+      version: 3,
+      httpSetting: {
+        reqTimeout: 10e3,
+        readTimeout: 3 * 60e3,
+        retryTimes: 2,
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36',
+      },
     }, options
 
     if @options.version is 2
@@ -71,7 +79,7 @@ class EPub
     if _.isEmpty @options.author
       @options.author = ["anonymous"]
     if not @options.tempDir
-      @options.tempDir = path.resolve "./tempDir/"
+      @options.tempDir = path.resolve os.tmpdir(), "epub-gen"
     @id = uuid()
     @uuid = path.resolve @options.tempDir, @id
     @options.uuid = @uuid
@@ -259,7 +267,6 @@ class EPub
     generateDefer.promise
 
   makeCover: ()->
-    userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
     coverDefer = new Q.defer()
     if @options.cover
       destPath = path.resolve @uuid, ("./OEBPS/cover." + @options._coverExtension)
@@ -267,11 +274,11 @@ class EPub
       if @options.cover.slice(0,4) is "http"
         writeStream = request.get(@options.cover)
                       .timeout {
-                        response: 10e3, #Wait 10 seconds for the server to start sending
-                        deadline: 3 * 60e3, #allow 3 minute for the image to finish loading
+                        response: @options.httpSetting.reqTimeout,
+                        deadline: @options.httpSetting.readTimeout,
                       }
-                      .retry 2 # retry 2 times before responding
-                      .set 'User-Agent': userAgent
+                      .retry @options.httpSetting.retryTimes
+                      .set 'User-Agent': @options.httpSetting.userAgent
         writeStream.pipe(fs.createWriteStream(destPath))
       else
         writeStream = fs.createReadStream(@options.cover)
@@ -304,11 +311,11 @@ class EPub
       if options.url.indexOf("http") is 0
         requestAction = request.get(options.url)
                         .timeout {
-                          response: 10000, #Wait 10 seconds for the server to start sending
-                          deadline: 3 * 60e3, #allow 3 minute for the image to finish loading
+                          response: @options.httpSetting.reqTimeout,
+                          deadline: @options.httpSetting.readTimeout,
                         }
-                        .retry 2 # retry 2 times before responding
-                        .set 'User-Agent': userAgent
+                        .retry @options.httpSetting.retryTimes
+                        .set 'User-Agent': @options.httpSetting.userAgent
         requestAction.pipe(fs.createWriteStream(filename))
       else
         requestAction = fs.createReadStream(path.resolve(options.dir, options.url))
