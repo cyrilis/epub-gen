@@ -1,16 +1,18 @@
 path = require "path"
 fs = require "fs"
+os = require "os"
 Q = require "q"
 _ = require "underscore"
 uslug = require "uslug"
 ejs = require "ejs"
 cheerio = require "cheerio"
 entities = require "entities"
-request = require "superagent"
+got = require "got"
 fsextra = require "fs-extra"
 removeDiacritics = require("diacritics").remove
 mime = require "mime"
 archiver = require "archiver"
+mkdirp = require "mkdirp"
 
 # provides rm -rf for deleting temp directory across various platforms.
 rimraf = require "rimraf"
@@ -28,8 +30,8 @@ class EPub
 
     if output
       @options.output = output
-
-    if not @options.output
+      mkdirp path.dirname output
+    else
       console.error(new Error("No Output Path"))
       @defer.reject(new Error("No output path"))
       return
@@ -51,7 +53,12 @@ class EPub
       customOpfTemplatePath: null
       customNcxTocTemplatePath: null
       customHtmlTocTemplatePath: null
-      version: 3
+      version: 3,
+      httpSetting: {
+        timeout: 3 * 60e3,
+        retryTimes: 2,
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36',
+      },
     }, options
 
     if @options.version is 2
@@ -70,7 +77,7 @@ class EPub
     if _.isEmpty @options.author
       @options.author = ["anonymous"]
     if not @options.tempDir
-      @options.tempDir = path.resolve __dirname, "../tempDir/"
+      @options.tempDir = path.resolve os.tmpdir(), "epub-gen"
     @id = uuid()
     @uuid = path.resolve @options.tempDir, @id
     @options.uuid = @uuid
@@ -172,12 +179,9 @@ class EPub
             if self.options.verbose then console.log("Done.")
           , (err)->
             self.defer.reject(err)
-        , (err)->
-          self.defer.reject(err)
-      , (err)->
-        self.defer.reject(err)
-    , (err)->
-      self.defer.reject(err)
+        , (err)-> self.defer.reject(err)
+      , (err)-> self.defer.reject(err)
+    , (err)-> self.defer.reject(err)
 
   generateTempFile: ()->
     generateDefer = new Q.defer()
@@ -258,23 +262,30 @@ class EPub
     generateDefer.promise
 
   makeCover: ()->
-    userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
     coverDefer = new Q.defer()
     if @options.cover
       destPath = path.resolve @uuid, ("./OEBPS/cover." + @options._coverExtension)
-      writeStream = null
+      inputStream = null
       if @options.cover.slice(0,4) is "http"
-        writeStream = request.get(@options.cover).set 'User-Agent': userAgent
-        writeStream.pipe(fs.createWriteStream(destPath))
+        inputStream = got.stream(@options.cover, {
+          timeout: {
+            request: @options.httpSetting.timeout,
+          },
+          retry: @options.httpSetting.retryTimes,
+          headers: {
+            'User-Agent': @options.httpSetting.userAgent
+          },
+        })
+        inputStream.pipe(fs.createWriteStream(destPath))
       else
-        writeStream = fs.createReadStream(@options.cover)
-        writeStream.pipe(fs.createWriteStream(destPath))
+        inputStream = fs.createReadStream(@options.cover)
+        inputStream.pipe(fs.createWriteStream(destPath))
 
-      writeStream.on "end", ()->
+      inputStream.on "end", ()->
         console.log "[Success] cover image downloaded successfully!"
         coverDefer.resolve()
-      writeStream.on "error", (err)->
-        console.error "Error", err
+      inputStream.on "error", (err)->
+        console.error "[Error] cover image downloaded error", err.message
         coverDefer.reject(err)
     else
       coverDefer.resolve()
@@ -284,7 +295,6 @@ class EPub
 
   downloadImage: (options)->  #{id, url, mediaType}
     self = @
-    userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
     if not options.url and typeof options isnt "string"
       return false
     downloadImageDefer = new Q.defer()
@@ -294,18 +304,28 @@ class EPub
       fsextra.copySync(auxpath, filename)
       return downloadImageDefer.resolve(options)
     else
+      inputStream = null
       if options.url.indexOf("http") is 0
-        requestAction = request.get(options.url).set 'User-Agent': userAgent
-        requestAction.pipe(fs.createWriteStream(filename))
+        inputStream = got.stream(options.url, {
+          timeout: {
+            request: @options.httpSetting.timeout,
+          },
+          retry: @options.httpSetting.retryTimes,
+          headers: {
+            'User-Agent': @options.httpSetting.userAgent
+          },
+        })
+
+        inputStream.pipe(fs.createWriteStream(filename))
       else
-        requestAction = fs.createReadStream(path.resolve(options.dir, options.url))
-        requestAction.pipe(fs.createWriteStream(filename))
-      requestAction.on 'error', (err)->
-        console.error '[Download Error]' ,'Error while downloading', options.url, err
+        inputStream = fs.createReadStream(path.resolve(options.dir, options.url))
+        inputStream.pipe(fs.createWriteStream(filename))
+      inputStream.on 'error', (err)->
+        console.error '[Download Error]' ,'Error while downloading', options.url, err.message
         fs.unlinkSync(filename)
         downloadImageDefer.reject(err)
 
-      requestAction.on 'end', ()->
+      inputStream.on 'end', ()->
         console.log "[Download Success]", options.url
         downloadImageDefer.resolve(options)
 
