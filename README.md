@@ -85,7 +85,7 @@ Then put this in your code:
     - `filename`:
         optional, specify filename for each chapter, default: undefined;
 - `httpSetting`:
-	    optional, specify download settings for each image, default request timout 10s, read timeout 180s, retry 2 times.
+	    optional, specify download settings for each image, default timeout 180s, retry 2 times.
 - `verbose`:
     specify whether or not to console.log progress messages, default: false.
 
@@ -121,8 +121,7 @@ If you don't want pass the output pass the output path as the second argument, y
             ...
         ],
         httpSetting: {
-			reqTimeout: 10e3,
-			readTimeout: 3 * 60e3,
+			timeout: 3 * 60e3,
 			retryTimes: 2,
 			userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36',
 		},
