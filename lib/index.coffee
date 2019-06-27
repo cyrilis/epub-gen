@@ -7,6 +7,7 @@ ejs = require "ejs"
 cheerio = require "cheerio"
 entities = require "entities"
 request = require "superagent"
+require('superagent-proxy')(request)
 fsextra = require "fs-extra"
 removeDiacritics = require("diacritics").remove
 mime = require "mime"
