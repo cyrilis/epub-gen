@@ -35,6 +35,7 @@
     "q": "^1.5.1",
     "rimraf": "^2.6.3",
     "superagent": "^3.8.3",
+    "superagent-proxy": "^2.0.0",
     "underscore": "^1.9.1",
     "uslug": "^1.0.4"
   },
