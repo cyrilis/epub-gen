@@ -17,9 +17,6 @@
                 </li>
             <% } %>
         <% }) %>
-        <li class="table-of-content">
-            <a href="toc.xhtml">- <%= tocTitle %> -</a>
-        </li>
         <% content.forEach(function(content, index){ %>
             <% if(!content.excludeFromToc && !content.beforeToc){ %>
                 <li class="table-of-content">
