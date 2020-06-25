@@ -132,7 +132,7 @@ class EPub
         if self.options.version is 2
           if that.name in allowedXhtml11Tags
           else
-            console.log "Warning (content[" + index + "]):", that.name, "tag isn't allowed on EPUB 2/XHTML 1.1 DTD."
+            if self.options.verbose then console.log "Warning (content[" + index + "]):", that.name, "tag isn't allowed on EPUB 2/XHTML 1.1 DTD."
             child = $(that).html()
             $(that).replaceWith($("<div>" + child + "</div>"))
 
@@ -259,6 +259,7 @@ class EPub
     generateDefer.promise
 
   makeCover: ()->
+    self = @
     userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"
     coverDefer = new Q.defer()
     if @options.cover
@@ -272,7 +273,7 @@ class EPub
         writeStream.pipe(fs.createWriteStream(destPath))
 
       writeStream.on "end", ()->
-        console.log "[Success] cover image downloaded successfully!"
+        if self.options.verbose then console.log "[Success] cover image downloaded successfully!"
         coverDefer.resolve()
       writeStream.on "error", (err)->
         console.error "Error", err
@@ -302,12 +303,12 @@ class EPub
         requestAction = fs.createReadStream(path.resolve(options.dir, options.url))
         requestAction.pipe(fs.createWriteStream(filename))
       requestAction.on 'error', (err)->
-        console.error '[Download Error]' ,'Error while downloading', options.url, err
+        if self.options.verbose then console.error '[Download Error]' ,'Error while downloading', options.url, err
         fs.unlinkSync(filename)
         downloadImageDefer.reject(err)
 
       requestAction.on 'end', ()->
-        console.log "[Download Success]", options.url
+        if self.options.verbose then console.log "[Download Success]", options.url
         downloadImageDefer.resolve(options)
 
       downloadImageDefer.promise
@@ -343,13 +344,13 @@ class EPub
 
     archive = archiver("zip", {zlib: {level: 9}})
     output = fs.createWriteStream self.options.output
-    console.log "Zipping temp dir to", self.options.output
+    if self.options.verbose then console.log "Zipping temp dir to", self.options.output
     archive.append("application/epub+zip", {store:true, name:"mimetype"})
     archive.directory cwd + "/META-INF", "META-INF"
     archive.directory cwd + "/OEBPS", "OEBPS"
     archive.pipe output
     archive.on "end", ()->
-      console.log "Done zipping, clearing temp dir..."
+      if self.options.verbose then console.log "Done zipping, clearing temp dir..."
       rimraf cwd, (err)->
         if err
           genDefer.reject(err)
