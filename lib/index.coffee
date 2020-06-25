@@ -105,17 +105,12 @@ class EPub
       allowedXhtml11Tags = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "dl", "dt", "dd", "address", "hr", "pre", "blockquote", "center", "ins", "del", "a", "span", "bdo", "br", "em", "strong", "dfn", "code", "samp", "kbd", "bar", "cite", "abbr", "acronym", "q", "sub", "sup", "tt", "i", "b", "big", "small", "u", "s", "strike", "basefont", "font", "object", "param", "img", "table", "caption", "colgroup", "col", "thead", "tfoot", "tbody", "tr", "th", "td", "embed", "applet", "iframe", "img", "map", "noscript", "ns:svg", "object", "script", "table", "tt", "var"]
 
       $ = cheerio.load( content.data, {
+        withDomLvl1: true,
         lowerCaseTags: true,
         recognizeSelfClosing: true
       })
 
-      # Only body innerHTML is allowed
-      if $("body").length
-        $ = cheerio.load( $("body").html(), {
-          lowerCaseTags: true,
-          recognizeSelfClosing: true
-        })
-      $($("*").get().reverse()).each (elemIndex, elem)->
+      $($("body *").get().reverse()).each (elemIndex, elem)->
         attrs = elem.attribs
         that = @
         if that.name in ["img", "br", "hr"]
@@ -148,7 +143,7 @@ class EPub
           dir = content.dir
           self.options.images.push {id, url, dir, mediaType, extension}
         $(elem).attr("src", "images/#{id}.#{extension}")
-      content.data = $.xml()
+      content.data = $.html("body > *", { xmlMode: true })
       content
 
     if @options.cover
@@ -256,7 +251,7 @@ class EPub
       console.error arguments
       generateDefer.reject(err)
 
-    generateDefer.promise
+    return generateDefer.promise
 
   makeCover: ()->
     self = @
@@ -281,7 +276,7 @@ class EPub
     else
       coverDefer.resolve()
 
-    coverDefer.promise
+    return coverDefer.promise
 
 
   downloadImage: (options)->  #{id, url, mediaType}
@@ -311,7 +306,7 @@ class EPub
         if self.options.verbose then console.log "[Download Success]", options.url
         downloadImageDefer.resolve(options)
 
-      downloadImageDefer.promise
+      return downloadImageDefer.promise
 
 
   downloadAllImage: ()->
@@ -327,7 +322,7 @@ class EPub
       Q.all deferArray
       .fin ()->
         imgDefer.resolve()
-    imgDefer.promise
+    return imgDefer.promise
 
   genEpub: ()->
     # Thanks to Paul Bradley
@@ -359,6 +354,6 @@ class EPub
     archive.on "error", (err) -> genDefer.reject(err)
     archive.finalize()
 
-    genDefer.promise
+    return genDefer.promise
 
 module.exports = EPub
