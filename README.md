@@ -143,7 +143,7 @@ Alice's Adventures in Wonderland is generated successfully
 
 If it fails, you'll see:
 ```
-
+failed to generate epub
 ```
 
 Want to improve this library's testing library? Please contribute! https://github.com/cyrilis/epub-gen/issues/57
