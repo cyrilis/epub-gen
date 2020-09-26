@@ -132,6 +132,22 @@ If you don't want pass the output pass the output path as the second argument, y
 
 _From Lewis Carroll "Alice's Adventures in Wonderland", based on text at https://www.cs.cmu.edu/~rgs/alice-table.html and images from http://www.alice-in-wonderland.net/resources/pictures/alices-adventures-in-wonderland._
 
+## Tests
+
+Run `npm run test` 
+
+If it succeeds, you'll see:
+```
+Alice's Adventures in Wonderland is generated successfully
+```
+
+If it fails, you'll see:
+```
+
+```
+
+Want to improve this library's testing library? Please contribute! https://github.com/cyrilis/epub-gen/issues/57
+
 ## License
 
 (The MIT License)

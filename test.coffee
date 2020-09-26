@@ -24,4 +24,6 @@ optionsAlice = {
 }
 
 new EPub(optionsAlice, path.resolve(__dirname, "./tempDir/book.epub")).promise.then ()->
-  console.log "#{options.title} is generated successfully"
+  console.log "#{optionsAlice.title} is generated successfully"
+.catch (e)->
+  console.error "failed to generate epub", e

@@ -29,7 +29,9 @@
   };
 
   new EPub(optionsAlice, path.resolve(__dirname, "./tempDir/book.epub")).promise.then(function() {
-    return console.log(`${options.title} is generated successfully`);
+    return console.log(`${optionsAlice.title} is generated successfully`);
+  }).catch(function(e) {
+    return console.error("failed to generate epub", e);
   });
 
 }).call(this);
