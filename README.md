@@ -86,6 +86,8 @@ Then put this in your code:
         optional, specify filename for each chapter, default: undefined;
 - `verbose`:
     specify whether or not to console.log progress messages, default: false.
+- `tempDir`:
+    Specify a temporary folder to use for epub creation, default: node_modules/epub-gen/tempDir.
 
 #### Output
 If you don't want pass the output pass the output path as the second argument, you should specify output path as `option.output`.
