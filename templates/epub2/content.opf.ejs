@@ -46,7 +46,9 @@
                 <itemref idref="content_<%= index %>_<%= content.id %>"/>
             <% } %>
         <% }) %>
-        <itemref idref="toc" />
+        <% if(isTOC) { %>
+            <itemref idref="toc" />
+            <% } %>
         <% content.forEach(function(content, index){ %>
             <% if(!content.beforeToc && !content.excludeFromToc){ %>
                 <itemref idref="content_<%= index %>_<%= content.id %>"/>
