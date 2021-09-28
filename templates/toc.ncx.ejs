@@ -25,14 +25,12 @@
                 </navPoint>
             <% } %>
         <% }) %>
-        <% if(isTOC) { %>
         <navPoint id="toc" playOrder="<%= _index++ %>" class="chapter">
             <navLabel>
                 <text><%= tocTitle %></text>
             </navLabel>
             <content src="toc.xhtml"/>
         </navPoint>
-        <% } %>
 
         <% content.forEach(function(content, index){ %>
             <% if(!content.excludeFromToc && !content.beforeToc){ %>
