@@ -65,6 +65,10 @@
                                             <% }) %>
     </spine>
     <guide>
-        <reference type="text" title="Table of Content" href="toc.xhtml" />
+        <% if (startPage) { %>
+            <reference type="text" title="Startup Page" href="<%= startPage %>.xhtml" />
+        <% } else { %>
+            <reference type="text" title="Table of Content" href="toc.xhtml" />
+        <% } %>
     </guide>
 </package>
