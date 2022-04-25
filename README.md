@@ -39,7 +39,7 @@ Then put this in your code:
 - `cover`:
     Book cover image (optional), File path (absolute path) or web url, eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
 - `output`
-    Out put path (absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
+    Output path (absolute path), you can also pass output as the second argument when using `new` keyword, eg: `new Epub(options, output)`
 - `version`:
     You can specify the version of the generated EPUB, `3` the latest version (http://idpf.org/epub/30) or `2` the previous version (http://idpf.org/epub/201, for better compatibility with older readers). If not specified, will fallback to `3`.
 - `css`:
