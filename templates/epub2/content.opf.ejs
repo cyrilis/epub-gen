@@ -14,7 +14,7 @@
         <dc:date opf:event="modification"><%= date %></dc:date>
         <dc:language><%= lang || "en" %></dc:language>
         <meta name="cover" content="image_cover" />
-        <meta name="generator" content="epub-gen" />
+        <meta name="generator" content="Atticus" />
 
     </metadata>
 
@@ -46,7 +46,9 @@
                 <itemref idref="content_<%= index %>_<%= content.id %>"/>
             <% } %>
         <% }) %>
-        <itemref idref="toc" />
+        <% if(isTOC) { %>
+            <itemref idref="toc" />
+            <% } %>
         <% content.forEach(function(content, index){ %>
             <% if(!content.beforeToc && !content.excludeFromToc){ %>
                 <itemref idref="content_<%= index %>_<%= content.id %>"/>
