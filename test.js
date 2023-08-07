@@ -12,6 +12,11 @@
     publisher: "Macmillan & Co.",
     cover: "http://orig10.deviantart.net/e272/f/2013/255/0/0/alice_in_wonderland_book_cover_by_pannucabaguana-d6m003p.jpg", // url or path
     version: 3,
+    collection: {
+      name: "Alice's Adventures in Wonderland",
+      type: "set",
+      position: 1
+    },
     content: [
       {
         title: "About the author",
