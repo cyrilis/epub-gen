@@ -38,6 +38,17 @@ Then put this in your code:
     Publisher name (optional)
 - `cover`:
     Book cover image (optional), File path (absolute path) or web url, eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
+- `collection`:
+    If the book is part of a collection or series. An object with `name`, `type` and `position`, . eg. `{name: "Lord of the rings", type: "set", position: 1}`
+    
+    **Object variable definition:**
+
+    - `name`: 
+        String of the collections name.
+    - `type`: 
+        Can be either `"set"` which is another name for a collection or `"series"`.
+    - `position`:
+        An numeric value that determines it's position. Can be a decimal number but not negative.
 - `output`
     Out put path (absolute path), you can also path output as the second argument when use `new` , eg: `new Epub(options, output)`
 - `version`:
