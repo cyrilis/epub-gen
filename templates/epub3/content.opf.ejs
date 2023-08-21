@@ -35,8 +35,10 @@
         <meta property="belongs-to-collection" id="collection"><%= collection.name %></meta>
         <meta refines="#collection" property="collection-type"><%= collection.type %></meta>
         <meta refines="#collection" property="group-position"><%= collection.position %></meta>
-        <% } %>  
-
+        <% } %>
+        <% if(description !== null){ %>
+        <dc:description><%= description %></dc:description>
+        <% } %>
     </metadata>
 
     <manifest>

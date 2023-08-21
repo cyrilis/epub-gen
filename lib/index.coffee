@@ -41,7 +41,6 @@ class EPub
       return
 
     @options = _.extend {
-      description: options.title
       publisher: "anonymous"
       author: ["anonymous"]
       tocTitle: "Table Of Contents"
@@ -54,6 +53,7 @@ class EPub
       customHtmlTocTemplatePath: null
       version: 3
       collection: null
+      description: null
     }, options
 
     if @options.version is 2

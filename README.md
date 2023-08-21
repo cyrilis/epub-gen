@@ -38,6 +38,8 @@ Then put this in your code:
     Publisher name (optional)
 - `cover`:
     Book cover image (optional), File path (absolute path) or web url, eg. `"http://abc.com/book-cover.jpg"` or `"/User/Alice/images/book-cover.jpg"`
+- `description`:
+    Description or blurb of the book (optional)
 - `collection`:
     If the book is part of a collection or series. An object with `name`, `type` and `position`, . eg. `{name: "Lord of the rings", type: "set", position: 1}`
     
