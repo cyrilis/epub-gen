@@ -7,6 +7,12 @@ optionsAlice = {
   publisher: "Macmillan & Co."
   cover: "http://orig10.deviantart.net/e272/f/2013/255/0/0/alice_in_wonderland_book_cover_by_pannucabaguana-d6m003p.jpg" # url or path
   version: 3
+  description: "On an ordinary summer's afternoon, Alice tumbles down a hole and an extraordinary adventure begins. In a strange world with even stranger characters, she meets a grinning cat and a rabbit with a pocket watch, joins a Mad Hatter's Tea Party, and plays croquet with the Queen!"
+  collection: {
+    name: "Alice's Adventures in Wonderland"
+    type: "set"
+    position: 1
+  }
   content: [
     {
       title: "About the author"

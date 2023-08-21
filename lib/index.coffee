@@ -41,7 +41,6 @@ class EPub
       return
 
     @options = _.extend {
-      description: options.title
       publisher: "anonymous"
       author: ["anonymous"]
       tocTitle: "Table Of Contents"
@@ -53,6 +52,8 @@ class EPub
       customNcxTocTemplatePath: null
       customHtmlTocTemplatePath: null
       version: 3
+      collection: null
+      description: null
     }, options
 
     if @options.version is 2
@@ -72,6 +73,8 @@ class EPub
       @options.author = ["anonymous"]
     if not @options.tempDir
       @options.tempDir = path.resolve __dirname, "../tempDir/"
+    if @options.collection != null && (@options.collection.name == undefined || @options.collection.type == undefined || @options.collection.position == undefined)
+      @options.collection = null
     @id = uuid()
     @uuid = path.resolve @options.tempDir, @id
     @options.uuid = @uuid
